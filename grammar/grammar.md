@@ -90,7 +90,7 @@ by the function (if anything).
 The colon operator can be used to chain function calls (if the returned value from
 one function is an object with functions).
 
-myObject:(setName 'bob'):(concat 'Hi ')
+	myObject:(setName 'bob'):(concat 'Hi ')
 
 ## Lazy arguments
 
@@ -100,11 +100,11 @@ as arguments and 2. to enhance legibility.
 A placeholder is named with curly braces '{}', and must be defined immediately after the
 closing parenthesis of the function call, with an indent.
 
-(doSomething {options})
-	options = object:
-		speed 10
-		onEnd function:
-			return 'hello'
+	(doSomething {options})
+		options = object:
+			speed 10
+			onEnd function:
+				return 'hello'
 
 ## Annonymous Functions as arguments
 
@@ -130,28 +130,28 @@ prototype chain.
 
 The syntax:
 
-obj = object:
-	key 'val'
+	obj = object:
+		key 'val'
 
 is essentially shorthand for
 
-obj = Object:(clone)
-obj.key = 'val'
+	obj = Object:(clone)
+	obj.key = 'val'
 
 
 A simple example:
 
-Human = Object:(clone)
-	hands 2
-	legs 2
-	move function: dist
-		console:(log 'Walking ' . dist . ' paces')
+	Human = Object:(clone)
+		hands 2
+		legs 2
+		move function: dist
+			console:(log 'Walking ' . dist . ' paces')
 
-Man = Object:(clone Human)
-	speakGender 'male'
+	Man = Object:(clone Human)
+		speakGender 'male'
 
-ben = Object:(clone Man)
-ben:(walk 10)
-//-> Walking 10 paces
-ben:(speakGender)
-//-> Male
+	ben = Object:(clone Man)
+	ben:(walk 10)
+	//-> Walking 10 paces
+	ben:(speakGender)
+	//-> Male
