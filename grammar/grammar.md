@@ -16,14 +16,14 @@ The following are examples of Cap expressions:
 		function arg1 arg2 arg3
 			return arg1 + arg2 + arg3
 
-	array 'dog' 'cat' 'human'
+	array: 'dog' 'cat' 'human' or ['dog' 'cat' 'human']
 
 	array:
 		'dog'
 		'cat'
 		'human'
 
-	function arg1 arg2 arg3
+	function: arg1 arg2 arg3
 		return arg1 + arg2 + arg3
 
 ## Assignment:
@@ -35,27 +35,27 @@ The following are examples of assignments:
 
 	result = 2+3
 
-	variableName = object
+	variableName = object:
 		property value
 		etc etc
 
-	myArray = array 'dog' 'cat' 'human'
+	myArray = array: 'dog' 'cat' 'human'
 
-	my2dArray = array
+	my2dArray = array:
 		array 'dog' 'cat' 'human'
 		array 'fish' 'crab' 'duck'
 
-	myComplexObject = object
-		underwater array
+	myComplexObject = object:
+		underwater array:
 			'fish'
 			'dog'
 			'cat'
-		land array
+		land array:
 			'dog'
 			'cat'
 			'human'
 
-	myFunction = function arg1 arg2 arg3
+	myFunction = function: arg1 arg2 arg3
 		return arg1 + arg2 + arg3
 
 ## Accessing object properties:
@@ -92,13 +92,66 @@ one function is an object with functions).
 
 myObject:(setName 'bob'):(concat 'Hi ')
 
-## Annonymous Functions
+## Lazy arguments
 
-Annoymous functions can only be passed as the last argument.
-This is common practice as they are normally used to define
-trivial callbacks anyway.
+Lazy arguments serve two purposes: 1. to enable passing annonymous functions
+as arguments and 2. to enhance legibility.
 
-All functions defined in Cap have an implicit callback argument.
+A placeholder is named with curly braces '{}', and must be defined immediately after the
+closing parenthesis of the function call, with an indent.
 
-	($ '#id'):(bind 'click'),
-		console:(log 'Click')
+(doSomething {options})
+	options = object:
+		speed 10
+		onEnd function:
+			return 'hello'
+
+## Annonymous Functions as arguments
+
+Functions can be passed as the last argument to a function with the comma, since this is
+the most common behviour (for use as a callback function).
+
+The following code is equivalent:
+
+	($ '#id'):(bind 'click' function:e),
+			console:(log e.target)
+
+	($ '#id'):(bind 'click' {callback})
+		callback = function: e
+			console:(log e.target)
+
+
+## Objects and inheritance
+
+Like JavaScript, Cap uses prototype inheritance. To reinforce this, there is no 'new' keyword.
+'new' implies classical inheritance, which leads to confusion in javascript. All new objects must
+be created (cloned) from a previous object, known as its prototype. Object is always at the root of the
+prototype chain.
+
+The syntax:
+
+obj = object:
+	key 'val'
+
+is essentially shorthand for
+
+obj = Object:(clone)
+obj.key = 'val'
+
+
+A simple example:
+
+Human = Object:(clone)
+	hands 2
+	legs 2
+	move function: dist
+		console:(log 'Walking ' . dist . ' paces')
+
+Man = Object:(clone Human)
+	speakGender 'male'
+
+ben = Object:(clone Man)
+ben:(walk 10)
+//-> Walking 10 paces
+ben:(speakGender)
+//-> Male
