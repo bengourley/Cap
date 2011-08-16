@@ -155,3 +155,8 @@ A simple example:
 	//-> Walking 10 paces
 	ben:(speakGender)
 	//-> Male
+
+There is no technical differentiation here between a prototype that you want
+to repeatedly clone (for want of a better word, a 'class'), and a fresh clone
+of the prototype that you actually want to use. Conventionally, the former
+will start with an upper camel case, and the latter will be lower camel case.
