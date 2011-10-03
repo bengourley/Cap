@@ -1,0 +1,12 @@
+object:
+	key 20
+
+myFunc = function:
+	return 10
+
+doSomething {options}
+		options = object:
+			speed 10
+			onEnd function:
+				return 'hello'
+
