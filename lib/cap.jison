@@ -31,6 +31,7 @@ STATEMENT_LIST
 STATEMENT
 	: TOP_LEVEL_FUNCTION_CALL vwhitespace
 	| ASSIGNMENT vwhitespace
+	| CONDITIONAL
 	;
 
 /*
@@ -38,8 +39,8 @@ STATEMENT
 */
 
 TOP_LEVEL_FUNCTION_CALL
-	: tilde ID ARG_LIST
-		{ $$ = new yy.nodes.Call($2, $3); }
+	: ID tilde ARG_LIST
+		{ $$ = new yy.nodes.Call($1, $3); }
 	;
 
 /*
@@ -55,8 +56,8 @@ TOP_LEVEL_FUNCTION_CALL
 NESTED_FUNCTION_CALL
 	: leftbracket TOP_LEVEL_FUNCTION_CALL rightbracket
 		{ $$ = $2 }
-	| tilde ID
-		{ $$ = new yy.nodes.Call($2, []); }
+	| ID tilde
+		{ $$ = new yy.nodes.Call($1, []); }
 	;
 
 /*
@@ -77,6 +78,33 @@ ARG_LIST
 ASSIGNMENT
 	: ID equals ASSIGN_EXPRESSION
 		{ $$ = new yy.nodes.Assign($1, $3); }
+	;
+
+/*
+	Conditionals
+*/
+
+CONDITIONAL
+	: IF_CLAUSE vwhitespace
+		{ $$ = new yy.nodes.Conditional($1[0], $1[1], ''); }
+	| IF_CLAUSE vwhitespace ELSE_CLAUSE vwhitespace
+		{ $$ = new yy.nodes.Conditional($1[0], $1[1], $3); }
+	| IF_CLAUSE vwhitespace ELSE_IF_CLAUSE vwhitespace ELSE_CLAUSE vwhitespace
+		{ $$ = new yy.nodes.Conditional($1[0], $1[1], $5); }
+	;
+
+IF_CLAUSE
+	: if ASSIGN_EXPRESSION vwhitespace indent vwhitespace PROGRAM_BLOCK dedent
+		{ $$ = [$2, $6] }
+	;
+
+ELSEIF_CLAUSES
+	: EMPTY
+	;
+
+ELSE_CLAUSE
+	: else vwhitespace indent vwhitespace PROGRAM_BLOCK dedent
+		{ $$ = $5; }
 	;
 
 /*
@@ -148,7 +176,7 @@ REFERENCE
 
 DYNAMIC_REFERENCE
 	: leftbracket TOP_LEVEL_FUNCTION_CALL rightbracket dot REFERENCE
-		{ $$ = new yy.nodes.Primative('[Dynamic].' + $5); }
+		{ $$ = new yy.nodes.DynamicId($2, $5); }
 	;
 
 /*
@@ -169,6 +197,10 @@ IDENTIFIER
 STRING
 	: string
 		{ $$ = new yy.nodes.Primative(yytext); }
+	;
+OPT_VWHITESPACE
+	: vwhitespace
+	| EMPTY
 	;
 
 EMPTY

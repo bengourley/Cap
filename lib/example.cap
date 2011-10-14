@@ -1,10 +1,5 @@
-bob = object:
-	age 10
-	height ~add 100 80 (~someFunc 10)
-
-janet = function:
-	something = 10
-	~console.log something
+cara = object:
+	fullname 'Cara Haines'
 
 
-~(~carFactory.getCar 'mercedes').drive
+console.log~ cara.fullname
