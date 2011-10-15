@@ -153,7 +153,7 @@ as arguments and 2. to enhance legibility.
 A placeholder is named with curly braces '{}', and must be defined immediately after the
 closing parenthesis of the function call, with an indent.
 
-	~doSomething {options}
+	doSomething~ {options}
 		options = object:
 			speed 10
 			onEnd function:
