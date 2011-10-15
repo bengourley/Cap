@@ -1,5 +1,9 @@
-cara = object:
-	fullname 'Cara Haines'
+car = object:
+	make 'BMW'
+	model 'Z4'
+	drive function:
+		console.log~ 'Driving!'
 
+console.log~ car.make
 
-console.log~ cara.fullname
+car.drive~
