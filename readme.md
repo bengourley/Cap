@@ -145,6 +145,22 @@ wrapping in parens and appending the tilde.
 
 	(object.getMeAMethod~ 'foo')~
 
+## Cascading
+
+It would be nice to build in the ability to cascade, with something like the syntax below:
+
+	with $~ '.item'
+		width~ '100px'
+		height~ '100px'
+		animate~ {props}
+			props = array:
+				object:
+					opacity 1
+				300
+				function:
+					console.log~ 'finished'
+
+
 ## Lazy arguments
 
 Lazy arguments serve two purposes: 1. to enable passing annonymous functions
@@ -158,6 +174,8 @@ closing parenthesis of the function call, with an indent.
 			speed 10
 			onEnd function:
 				return 'hello'
+
+How to deal with multiple placeholders and arrays...?
 
 ## Annonymous Functions as arguments
 
