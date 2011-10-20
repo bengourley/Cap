@@ -1,7 +1,21 @@
+/*
+ * Tests for lib/IndentHandler.js
+ * Run with `expresso -I lib`
+ */
+
+/*
+ * Module dependencies
+ */
+
+var IndentHandler = require('IndentHandler');
+
+/*
+ * Tests
+ */
+
 exports['indent handler'] = function (beforeExit, assert) {
 
-	var IndentHandler = require('IndentHandler'),
-		indentHandler = new IndentHandler();
+	var indentHandler = new IndentHandler();
 
 	assert.equal('', indentHandler.getIndent());
 

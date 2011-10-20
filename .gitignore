@@ -1,9 +1,10 @@
-# Node.js with Express and Stlyus
+# Node.js with Express and Stlyus (and Expresso TDD)
 public/css/*.css
 public/css/main/*.css
 public/css/main/content/*.css
 public/css/admin/*.css
 /.monitor
+lib-cov/*
 
 # Eclipse
 /.project
