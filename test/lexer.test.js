@@ -87,3 +87,61 @@ exports['starts with indent'] = function (beforeExit, assert) {
 	assert.equal(lexer.lex(), 'error');
 
 };
+
+exports['strings'] = function (beforeExit, assert) {
+
+	var lexer = newLexerWithInput('\'Hello, World!\'\n');
+
+	assert.equal(lexer.lex(), 'string');
+
+};
+
+exports['numbers'] = function (beforeExit, assert) {
+
+	var lexer = newLexerWithInput('12345 0.99\n');
+
+	assert.equal(lexer.lex(), 'number');
+	assert.equal(lexer.lex(), 'number');
+
+};
+
+exports['literals'] = function (beforeExit, assert) {
+
+	var lexer = newLexerWithInput('object: function: array:\n');
+
+	assert.equal(lexer.lex(), 'objectliteral');
+	assert.equal(lexer.lex(), 'functionliteral');
+	assert.equal(lexer.lex(), 'arrayliteral');
+
+};
+
+exports['show position'] = function (beforeExit, assert) {
+	
+	var lexer = newLexerWithInput('some program here... \n\n\n'),
+		position = lexer.showPosition();
+
+	assert.type(position, 'string');
+	assert.length(position, 20);
+
+};
+
+exports['single characters'] = function (beforeExit, assert) {
+
+	var lexer = newLexerWithInput('[]{}=."~+()¶\n');
+
+	assert.equal(lexer.lex(), 'leftsquarebracket');
+	assert.equal(lexer.lex(), 'rightsquarebracket');
+	assert.equal(lexer.lex(), 'leftbrace');
+	assert.equal(lexer.lex(), 'rightbrace');
+	assert.equal(lexer.lex(), 'equals');
+	assert.equal(lexer.lex(), 'dot');
+	assert.equal(lexer.lex(), 'speechmark');
+	assert.equal(lexer.lex(), 'tilde');
+	assert.equal(lexer.lex(), 'plus');
+	assert.equal(lexer.lex(), 'leftbracket');
+	assert.equal(lexer.lex(), 'rightbracket');
+	assert.equal(lexer.lex(), 'error');
+
+};
+
+

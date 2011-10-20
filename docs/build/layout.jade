@@ -1,0 +1,9 @@
+!!! 5
+html
+  head
+    title Cap – Documentation
+  body
+    - locals.dox.forEach(function (d) {
+      .method
+        h1= d.ctx ? d.ctx.name : 'undefined'
+    - });
