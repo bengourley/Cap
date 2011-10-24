@@ -196,3 +196,17 @@ The following code is equivalent:
 
 TODO!
 
+
+
+# List of languages which implement MN
+
+- OCaml
+- F#
+- Haskell
+- Scala
+
+Also look at currying
+
+Think about pattern matching
+
+Types and programming languages – Benjamin C Pierce

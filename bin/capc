@@ -9,7 +9,7 @@ var program = require('commander'),
 		Parser = require('jison').Parser,
 		Lexer = require('../lib/Lexer'),
 		nodes = require('../lib/Nodes'),
-		parser = require('../lib/parser.js').parser;
+		parser = require('../lib/Parser.js').parser;
 
 var compile = function () {
 
