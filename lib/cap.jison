@@ -4,7 +4,7 @@
 
 S
 	: PROGRAM_BLOCK
-		{ return new yy.nodes.Program($1); }
+		{ return yy.nodes.program({ statementList : $1 }); }
 	;
 
 /*
@@ -13,7 +13,7 @@ S
 */
 PROGRAM_BLOCK
 	: STATEMENT_LIST
-		{ $$ = new yy.nodes.StatementList($1); }
+		{ $$ = yy.nodes.statementList({ statements : $1 }); }
 	;
 
 STATEMENT_LIST
@@ -41,7 +41,7 @@ STATEMENT
 
 FUNCTION_CALL
 	: FUNCTION_POINTER ARGUMENT
-		{ $$ = new yy.nodes.Call($1, $2); }
+		{ $$ = yy.nodes.call({ fn : $1, arg : $2 }); }
 	;
 
 FUNCTION_POINTER
@@ -75,7 +75,7 @@ TUPLE_LIST
 
 ASSIGNMENT
 	: ID equals EXPRESSION
-		{ $$ = new yy.nodes.Assign($1, $3); }
+		{ $$ = yy.nodes.assign({ id : $1, expr : $3 }); }
 	;
 
 /*
@@ -84,11 +84,11 @@ ASSIGNMENT
 
 CONDITIONAL
 	: IF_CLAUSE vwhitespace
-		{ $$ = new yy.nodes.Conditional($1[0], $1[1], ''); }
+		{ $$ = yy.nodes.conditional({ ifClause : $1[0], ifBody : $1[1] }); }
 	| IF_CLAUSE vwhitespace ELSE_CLAUSE vwhitespace
-		{ $$ = new yy.nodes.Conditional($1[0], $1[1], $3); }
+		{ $$ = yy.nodes.conditional({ ifClause : $1[0], ifBody : $1[1], elseBody : $3 }); }
 	| IF_CLAUSE vwhitespace ELSE_IF_CLAUSE vwhitespace ELSE_CLAUSE vwhitespace
-		{ $$ = new yy.nodes.Conditional($1[0], $1[1], $5); }
+		{ $$ = yy.nodes.conditional({ ifClause : $1[0], ifBody : $1[1], elseBody : $5 }); }
 	;
 
 IF_CLAUSE
@@ -111,7 +111,7 @@ ELSE_CLAUSE
 
 WHERE
 	: FUNCTION_CALL where vwhitespace indent vwhitespace ASSIGNMENT_LIST vwhitespace dedent
-		{ $$ = new yy.nodes.Where($1, $6); }
+		{ $$ = yy.nodes.where({ call : $1, pre : $6 }); }
 	;
 
 ASSIGNMENT_LIST
@@ -145,12 +145,12 @@ EXPRESSION
 
 OBJECT_LITERAL
 	: objectliteral vwhitespace indent vwhitespace PROPERTY_LIST vwhitespace dedent
-		{ $$ = new yy.nodes.Object($5); }
+		{ $$ = yy.nodes.object({ propList : $5 }); }
 	;
 
 FUNCTION_LITERAL
 	: functionliteral PARAM vwhitespace indent vwhitespace PROGRAM_BLOCK dedent
-		{ $$ = new yy.nodes.Function($6, $2); }
+		{ $$ = yy.nodes.fn({ body : $6, param : $2 }); }
 	;
 
 PROPERTY_LIST
@@ -171,7 +171,7 @@ PARAM
 
 ID
 	: REFERENCE
-		{ $$ = new yy.nodes.Primative($1) }
+		{ $$ = yy.nodes.node({ value : $1 }) }
 	| DYNAMIC_REFERENCE
 	;
 
@@ -183,7 +183,7 @@ REFERENCE
 
 DYNAMIC_REFERENCE
 	: leftbracket FUNCTION_CALL rightbracket dot REFERENCE
-		{ $$ = new yy.nodes.DynamicId($2, $5); }
+		{ $$ = yy.nodes.dynamicId({ call : $2, prop : $5 }); }
 	;
 
 /*
@@ -193,7 +193,7 @@ DYNAMIC_REFERENCE
 
 NUMBER
 	: number
-		{ $$ = new yy.nodes.Primative(yytext); }
+		{ $$ = yy.nodes.node({ value : yytext }); }
 	;
 
 IDENTIFIER
@@ -203,7 +203,7 @@ IDENTIFIER
 
 STRING
 	: string
-		{ $$ = new yy.nodes.Primative(yytext); }
+		{ $$ = yy.nodes.node({ value : yytext }); }
 	;
 OPT_VWHITESPACE
 	: vwhitespace

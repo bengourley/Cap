@@ -1,5 +1,5 @@
 /*
- * Tests for lib/IndentHandler.js
+ * Tests for lib/indent-handler.js
  * Run with `expresso -I lib`
  */
 
@@ -7,7 +7,7 @@
  * Module dependencies
  */
 
-var IndentHandler = require('IndentHandler');
+var IndentHandler = require('indent-handler');
 
 /*
  * Tests

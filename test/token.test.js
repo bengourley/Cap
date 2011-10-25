@@ -7,7 +7,7 @@
  * Module dependencies
  */
 
-var Token = require('Token');
+var token = require('token');
 
 /*
  * Tests
@@ -15,17 +15,17 @@ var Token = require('Token');
 
 exports['token type'] = function (beforeExit, assert) {
 
-	var token = new Token('foo');
+	var t = token.create('foo');
 
-	assert.equal('foo', token.type);
+	assert.equal('foo', t.type);
 
 };
 
 exports['token value'] = function (beforeExit, assert) {
 
-	var token = new Token('foo', 'bar');
+	var t = token.create('foo', 'bar');
 
-	assert.equal(token.value, 'bar');
+	assert.equal(t.value, 'bar');
 
 };
 
