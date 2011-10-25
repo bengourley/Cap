@@ -4,7 +4,7 @@
 
 S
 	: PROGRAM_BLOCK
-		{ return $$; }
+		{ return new yy.nodes.Program($1); }
 	;
 
 /*
@@ -29,46 +29,44 @@ STATEMENT_LIST
 	statements.
 */
 STATEMENT
-	: TOP_LEVEL_FUNCTION_CALL vwhitespace
-	| ASSIGNMENT vwhitespace
+	: ASSIGNMENT vwhitespace
 	| CONDITIONAL
+	| EXPRESSION vwhitespace
+	| WHERE vwhitespace
 	;
 
 /*
 	Function calls
 */
 
-TOP_LEVEL_FUNCTION_CALL
-	: ID tilde ARG_LIST
-		{ $$ = new yy.nodes.Call($1, $3); }
+FUNCTION_CALL
+	: FUNCTION_POINTER ARGUMENT
+		{ $$ = new yy.nodes.Call($1, $2); }
+	;
+
+FUNCTION_POINTER
+	: FUNCTION_CALL
+	| EXPRESSION
+	;
+
+ARGUMENT
+	: EXPRESSION
 	;
 
 /*
-	In order to acheive nested function calls
-	without making the grammar ambiguous, there
-	must be a differentiation between top-level
-	and nested function calls.
-	A nested function call may only take arguments
-	if it is bracketed, otherwise all following
-	arguments are passed to the parent function call.
+	Tuples
 */
 
-NESTED_FUNCTION_CALL
-	: leftbracket TOP_LEVEL_FUNCTION_CALL rightbracket
+TUPLE
+	: leftbracket TUPLE_LIST rightbracket
 		{ $$ = $2 }
-	| ID tilde
-		{ $$ = new yy.nodes.Call($1, []); }
 	;
 
-/*
-	A list of arguments for a function
-	call. May be empty.
-*/
-ARG_LIST
-	: ARG_LIST ARG_EXPRESSION
-		{ $$ = $1.concat([$2]); }
-	| EMPTY
-		{ $$ = []; }
+TUPLE_LIST
+	: EXPRESSION comma EXPRESSION
+		{ $$ = [$1, $3] }
+	| TUPLE_LIST comma EXPRESSION
+		{ $$ = $1.concat($3) }
 	;
 
 /*
@@ -76,7 +74,7 @@ ARG_LIST
 */
 
 ASSIGNMENT
-	: ID equals ASSIGN_EXPRESSION
+	: ID equals EXPRESSION
 		{ $$ = new yy.nodes.Assign($1, $3); }
 	;
 
@@ -94,7 +92,7 @@ CONDITIONAL
 	;
 
 IF_CLAUSE
-	: if ASSIGN_EXPRESSION vwhitespace indent vwhitespace PROGRAM_BLOCK dedent
+	: if EXPRESSION vwhitespace indent vwhitespace PROGRAM_BLOCK dedent
 		{ $$ = [$2, $6] }
 	;
 
@@ -108,12 +106,24 @@ ELSE_CLAUSE
 	;
 
 /*
-	Expressions
+	Where clause
 */
 
+WHERE
+	: FUNCTION_CALL where vwhitespace indent vwhitespace ASSIGNMENT_LIST vwhitespace dedent
+		{ $$ = new yy.nodes.Where($1, $6); }
+	;
+
+ASSIGNMENT_LIST
+	: ASSIGNMENT
+		{ $$ = [$1] }
+	| ASSIGNMENT_LIST vwhitespace ASSIGNMENT
+		{ $$ = $1.concat([$3]); }
+	;
+
+
 /*
-	There are different rules
-	depending on the context.
+	Expressions
 */
 
 EXPRESSION 
@@ -122,18 +132,11 @@ EXPRESSION
 	| ID
 	| OBJECT_LITERAL
 	| FUNCTION_LITERAL
-	;
-
-ASSIGN_EXPRESSION
-	: EXPRESSION
-	| TOP_LEVEL_FUNCTION_CALL
-	;
-
-ARG_EXPRESSION
-	: NUMBER
-	| STRING
-	| ID
-	| NESTED_FUNCTION_CALL
+	| UNIT
+	| leftbracket EXPRESSION rightbracket
+		{ $$ = $2 }
+	| FUNCTION_CALL
+	| TUPLE
 	;
 
 /*
@@ -146,17 +149,21 @@ OBJECT_LITERAL
 	;
 
 FUNCTION_LITERAL
-	: functionliteral vwhitespace indent vwhitespace PROGRAM_BLOCK dedent
-		{ $$ = new yy.nodes.Function($5); }
+	: functionliteral PARAM vwhitespace indent vwhitespace PROGRAM_BLOCK dedent
+		{ $$ = new yy.nodes.Function($6, $2); }
 	;
 
 PROPERTY_LIST
-	: PROPERTY_LIST vwhitespace ID ASSIGN_EXPRESSION
+	: PROPERTY_LIST vwhitespace ID EXPRESSION
 		{ $$ = $1.concat([[$3, $4]]); }
-	| ID ASSIGN_EXPRESSION
+	| ID EXPRESSION
 		{ $$ = [[$1, $2]]; }
 	;
 
+PARAM
+	:	IDENTIFIER PARAM
+	| EMPTY
+	;
 
 /*
  Compound identifiers
@@ -175,7 +182,7 @@ REFERENCE
 	;
 
 DYNAMIC_REFERENCE
-	: leftbracket TOP_LEVEL_FUNCTION_CALL rightbracket dot REFERENCE
+	: leftbracket FUNCTION_CALL rightbracket dot REFERENCE
 		{ $$ = new yy.nodes.DynamicId($2, $5); }
 	;
 
@@ -201,6 +208,10 @@ STRING
 OPT_VWHITESPACE
 	: vwhitespace
 	| EMPTY
+	;
+
+UNIT
+	: leftbracket rightbracket
 	;
 
 EMPTY

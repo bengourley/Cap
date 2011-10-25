@@ -115,7 +115,7 @@ exports['literals'] = function (beforeExit, assert) {
 
 };
 
-exports['show position'] = function (beforeExit, assert) {
+/*exports['show position'] = function (beforeExit, assert) {
 	
 	var lexer = newLexerWithInput('some program here... \n\n\n'),
 		position = lexer.showPosition();
@@ -123,7 +123,7 @@ exports['show position'] = function (beforeExit, assert) {
 	assert.type(position, 'string');
 	assert.length(position, 20);
 
-};
+};*/
 
 exports['single characters'] = function (beforeExit, assert) {
 

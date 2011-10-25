@@ -20,6 +20,6 @@ parser.yy.nodes = nodes;
 
 exports['empty program'] = function (beforeExit, assert) {
 
-	assert.eql(parser.parse('').statements, []);
+	assert.eql(parser.parse('').statementList.statements, []);
 
 };

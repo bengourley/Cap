@@ -11,7 +11,7 @@ var program = require('commander'),
 		nodes = require('../lib/Nodes'),
 		parser = require('../lib/Parser.js').parser;
 
-var compile = function () {
+var compile = function (print) {
 
 	fs.readFile(program.args[0], 'utf8', function (err, data) {
 
@@ -20,9 +20,16 @@ var compile = function () {
 	
 		// Add AST nodes for use in grammar
 		parser.yy.nodes = nodes;
-		var AST = parser.parse(data);
-		//console.log(AST);
-		console.log(AST.compile());
+		try {
+			var AST = parser.parse(data);
+			console.log(print ? AST.print() : AST.compile());
+		} catch (e) {
+			if (/^Parse error/.test(e.message)) {
+				console.log(e.message);
+			} else {
+				throw e;
+			}
+		}
 
 	});
 };
@@ -32,24 +39,22 @@ program
 	.version('0.0.1')
 	.option('-p, --print', 'print the compiled js instead of outputting to file')
 	.option('-t, --tree', 'pretty print the nodes in the AST instead of compiling to file')
-	.option('-g, --grammar [grammar]', 're-generate the parser with the given grammar file')
+	.option('-g, --grammar [grammar]', 'generate a parser on the fly with the given grammar file')
 	.parse(process.argv);
 
 if (!program.args[0]) {
 	console.log('No file supplied!');
 } else {
 
-	/*if (program.grammar) {
+	if (program.grammar) {
 		fs.readFile(program.grammar, 'utf8', function (err, data) {
-			fs.writeFile('./p.js', new Parser(data).generate(), 'utf8', function (err) {
-				console.log('Grammar recompiled');
-				compile();
-			});
+			parser = new Parser(data);
+			compile(program.print);
 		});
-	} else {*/
+	} else {
 
-	compile();
+		compile(program.print);
 
-	//}
+	}
 
 }
