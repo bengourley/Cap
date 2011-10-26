@@ -15,15 +15,14 @@ var token = require('token');
 
 exports['token type'] = function (beforeExit, assert) {
 
-	var t = token.create('foo');
-
+	var t = token({ type : 'foo'});
 	assert.equal('foo', t.type);
 
 };
 
 exports['token value'] = function (beforeExit, assert) {
 
-	var t = token.create('foo', 'bar');
+	var t = token({ type : 'foo', value : 'bar' });
 
 	assert.equal(t.value, 'bar');
 

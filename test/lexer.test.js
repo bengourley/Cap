@@ -7,15 +7,15 @@
  * Module dependencies
  */
 
-var Lexer = require('Lexer');
+var lexer = require('lexer');
 
 /*
  * Convenience function for creating lexers
  */
 var newLexerWithInput = function (input) {
-	var lexer = new Lexer();
-	lexer.setInput(input);
-	return lexer;
+	var l = lexer();
+	l.setInput(input);
+	return l;
 };
 
 /*
@@ -32,7 +32,7 @@ exports['empty input'] = function (beforeExit, assert) {
 
 exports['keyword vs. identifier'] = function (beforeExit, assert) {
 
-	var lexer = newLexerWithInput('if ift gif\n');
+	var lexer = newLexerWithInput('if ift gif ');
 
 	assert.equal(lexer.lex(), 'if');
 	assert.equal(lexer.lex(), 'identifier');

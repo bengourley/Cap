@@ -7,7 +7,7 @@
  * Module dependencies
  */
 
-var IndentHandler = require('indent-handler');
+var indentHandler = require('indent-handler');
 
 /*
  * Tests
@@ -15,18 +15,18 @@ var IndentHandler = require('indent-handler');
 
 exports['indent handler'] = function (beforeExit, assert) {
 
-	var indentHandler = new IndentHandler();
+	var ih = indentHandler();
 
-	assert.equal('', indentHandler.getIndent());
+	assert.equal('', ih.getIndent());
 
-	indentHandler.nextIndent();
-	assert.equal('  ', indentHandler.getIndent());
+	ih.nextIndent();
+	assert.equal('  ', ih.getIndent());
 
-	indentHandler.prevIndent();
-	assert.equal('', indentHandler.getIndent());
+	ih.prevIndent();
+	assert.equal('', ih.getIndent());
 
 	try {
-		indentHandler.prevIndent();
+		ih.prevIndent();
 	} catch (e) {
 		assert.equal('IndentException', e.name);
 	}

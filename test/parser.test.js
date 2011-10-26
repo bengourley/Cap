@@ -8,10 +8,10 @@
  */
 
 var parser = require('Parser').parser,
-		Lexer = require('Lexer'),
-		nodes = require('Nodes');
+	lexer = require('Lexer'),
+	nodes = require('Nodes');
 
-parser.lexer = new Lexer();
+parser.lexer =  lexer();
 parser.yy.nodes = nodes;
 
 /*
@@ -20,6 +20,6 @@ parser.yy.nodes = nodes;
 
 exports['empty program'] = function (beforeExit, assert) {
 
-	assert.eql(parser.parse('').statementList.statements, []);
+	assert.eql(parser.parse('').compile(), '(function () {\n}());');
 
 };
