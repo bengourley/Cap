@@ -5,6 +5,34 @@
 Cap is a language built on top of Javascript. It aims to unify the underlying concepts of
 functional and prototypical programming with an elegant and succint syntax.
 
+# Quickstart
+
+To get up and running you need node.js and npm. Go get them first.
+
+Then do:
+
+	cd /path/to/where/you/want/
+	git clone git@github.com:bengourley/Cap.git
+	cd Cap
+	npm install
+
+If that works, you should then be able to compile files like so:
+
+	./bin/capc example.cap
+
+Which currently outputs:
+
+	(function () {
+		var tick = function (e) {
+    		return console.log('tick');
+		};
+		var _rv = setInterval(tick, 1000);
+		delete tick;
+		return _rv;
+	}());
+
+You can then paste this in to a file and run it with node, or I generally open up Chrome and paste it in to the console.
+
 # Grammar
 
 This outlines the proposed Cap grammar, and is a work in progress.
@@ -108,10 +136,9 @@ As you can see, this also names the arguments – enhancing readability at the 
 
 ## Function Chaining
 
-If the result of a function is another function, it can be invoked immediately by
-wrapping in parens and juxtaposing an argument.
+If the result of a function is another function, it can be invoked immediately by juxtaposing another argument.
 
-	(object.getMeAMethod 'foo') 'arg'
+	object.getMeAMethod 'foo' 'arg'
 
 ## Cascading
 
