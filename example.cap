@@ -1,3 +1,9 @@
-setInterval (tick, 1000) where
-	tick = function: e
-		console.log 'tick'
+car = object:
+	drive function: options
+		console.log 'I am driving: ' . options.speed
+	color 'red'
+
+car.drive opts where
+	opts = object:
+		speed '10mph'
+		direction 'North'

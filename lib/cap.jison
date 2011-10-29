@@ -134,9 +134,18 @@ EXPRESSION
 	| FUNCTION_LITERAL
 	| UNIT
 	| leftbracket EXPRESSION rightbracket
-		{ $$ = $2 }
+		{ $$ = $2; }
 	| FUNCTION_CALL
 	| TUPLE
+	| CONCATENATION
+		{ $$ = yy.nodes.concatenation({ exprList : $1 }); }
+	;
+
+CONCATENATION
+	: CONCATENATION dot EXPRESSION
+		{ $$ = $1.concat([$3]); }
+	|	EXPRESSION dot EXPRESSION
+		{ $$ = [$1, $3]; }
 	;
 
 /*
