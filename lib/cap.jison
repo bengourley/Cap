@@ -45,28 +45,11 @@ FUNCTION_CALL
 	;
 
 FUNCTION_POINTER
-	: FUNCTION_CALL
-	| EXPRESSION
+	: EXPRESSION
 	;
 
 ARGUMENT
 	: EXPRESSION
-	;
-
-/*
-	Tuples
-*/
-
-TUPLE
-	: leftbracket TUPLE_LIST rightbracket
-		{ $$ = $2 }
-	;
-
-TUPLE_LIST
-	: EXPRESSION comma EXPRESSION
-		{ $$ = [$1, $3] }
-	| TUPLE_LIST comma EXPRESSION
-		{ $$ = $1.concat($3) }
 	;
 
 /*
@@ -135,10 +118,19 @@ EXPRESSION
 	| UNIT
 	| leftbracket EXPRESSION rightbracket
 		{ $$ = $2; }
+	| leftbracket TUPLE_LIST rightbracket
+		{ $$ = $2; }
 	| FUNCTION_CALL
-	| TUPLE
 	| CONCATENATION
 		{ $$ = yy.nodes.concatenation({ exprList : $1 }); }
+	| MATHSY
+	;
+
+TUPLE_LIST
+	: EXPRESSION comma EXPRESSION
+		{ $$ = [$1, $3] }
+	| TUPLE_LIST comma EXPRESSION
+		{ $$ = $1.concat($3) }
 	;
 
 CONCATENATION
@@ -146,6 +138,19 @@ CONCATENATION
 		{ $$ = $1.concat([$3]); }
 	|	EXPRESSION dot EXPRESSION
 		{ $$ = [$1, $3]; }
+	;
+
+MATHSY
+	: EXPRESSION plus EXPRESSION
+		{ $$ = yy.nodes.mathsy({ fix : 'in', left : $1, right : $3, op : '+' }); }
+	| EXPRESSION forwardslash EXPRESSION
+		{ $$ = yy.nodes.mathsy({ fix : 'in', left : $1, right : $3, op : '/' }); }
+	| EXPRESSION asterisk EXPRESSION
+		{ $$ = yy.nodes.mathsy({ fix : 'in', left : $1, right : $3, op : '*' }); }
+	| EXPRESSION minus EXPRESSION
+		{ $$ = yy.nodes.mathsy({ fix : 'in', left : $1, right : $3, op : '-' }); }
+	| minus EXPRESSION
+		{ $$ = yy.nodes.mathsy({ fix : 'pre', left : $2, op : '-' }); }
 	;
 
 /*
@@ -191,7 +196,7 @@ REFERENCE
 	;
 
 DYNAMIC_REFERENCE
-	: leftbracket FUNCTION_CALL rightbracket dot REFERENCE
+	: EXPRESSION dot REFERENCE
 		{ $$ = yy.nodes.dynamicId({ call : $2, prop : $5 }); }
 	;
 
