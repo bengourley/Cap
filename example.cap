@@ -1,1 +1,7 @@
-console.log (somefunc, arg)
+bob = object:
+	age 10
+
+say = function: something
+	console.log something
+
+say 'hello'

@@ -133,14 +133,14 @@ TUPLE_LIST
 		{ $$ = $1.concat($3) }
 	;
 
-CONCATENATION
+/*CONCATENATION
 	: CONCATENATION dot EXPRESSION
 		{ $$ = $1.concat([$3]); }
 	|	EXPRESSION dot EXPRESSION
 		{ $$ = [$1, $3]; }
-	;
+	;*/
 
-MATHSY
+/*MATHSY
 	: EXPRESSION plus EXPRESSION
 		{ $$ = yy.nodes.mathsy({ fix : 'in', left : $1, right : $3, op : '+' }); }
 	| EXPRESSION forwardslash EXPRESSION
@@ -151,7 +151,7 @@ MATHSY
 		{ $$ = yy.nodes.mathsy({ fix : 'in', left : $1, right : $3, op : '-' }); }
 	| minus EXPRESSION
 		{ $$ = yy.nodes.mathsy({ fix : 'pre', left : $2, op : '-' }); }
-	;
+	;*/
 
 /*
 	Object and function literals
@@ -168,7 +168,7 @@ FUNCTION_LITERAL
 	;
 
 PROPERTY_LIST
-	: PROPERTY_LIST vwhitespace ID EXPRESSION
+	: PROPERTY_LIST vwhitespace ID equals EXPRESSION
 		{ $$ = $1.concat([[$3, $4]]); }
 	| ID EXPRESSION
 		{ $$ = [[$1, $2]]; }
@@ -176,7 +176,9 @@ PROPERTY_LIST
 
 PARAM
 	:	IDENTIFIER PARAM
+		{ $$ = $1.concat([$2]); }
 	| EMPTY
+		{ $$ = []; }
 	;
 
 /*
@@ -185,7 +187,7 @@ PARAM
 
 ID
 	: REFERENCE
-		{ $$ = yy.nodes.node({ value : $1 }) }
+		{ $$ = yy.nodes.node({ value : $1 }); }
 	| DYNAMIC_REFERENCE
 	;
 
@@ -196,8 +198,8 @@ REFERENCE
 	;
 
 DYNAMIC_REFERENCE
-	: EXPRESSION dot REFERENCE
-		{ $$ = yy.nodes.dynamicId({ call : $2, prop : $5 }); }
+	: leftbracket EXPRESSION rightbracket dot REFERENCE
+		{ $$ = yy.nodes.dynamicId({ call : $1, prop : $3 }); }
 	;
 
 /*
