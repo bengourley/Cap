@@ -1,7 +1,1 @@
-bob = object:
-	age 10
-
-say = function: something
-	console.log something
-
-say 'hello'
+'werew'
