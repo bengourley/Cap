@@ -1,3 +1,1 @@
-bob ?
-	do something
-	do somethingDifferent
+consolelog ()
