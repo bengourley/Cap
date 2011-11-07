@@ -9,7 +9,7 @@ var program = require('commander'),
 	Parser = require('jison').Parser,
 	lexer = require('../lib/lexer'),
 	nodes = require('../lib/nodes'),
-	parser = require('../lib/parser.js').parser;
+	parser = require('../lib/parser.js');
 
 program
 	.version('0.0.1')
@@ -18,17 +18,13 @@ program
 	.option('-g, --grammar [grammar]', 'generate a parser on the fly with the given grammar file')
 	.parse(process.argv);
 
-var compile = function (print) {
+var compile = function (p, print) {
 
 	fs.readFile(program.args[0], 'utf8', function (err, data) {
-
-		// Assign custom lexer
-		parser.lexer = lexer();
 	
-		// Add AST nodes for use in grammar
-		parser.yy.nodes = nodes;
 		try {
-			var AST = parser.parse(data);
+			var AST = p.parse(data);
+			//console.log(AST);
 			console.log(print ? AST.print() : AST.compile());
 		} catch (e) {
 			// Catch a parser error for non-ugly output
@@ -49,12 +45,12 @@ if (!program.args[0]) {
 
 	if (program.grammar) {
 		fs.readFile(program.grammar, 'utf8', function (err, data) {
-			parser = new Parser(data);
-			compile(program.print);
+			var p = parser();
+			compile(p, program.print);
 		});
 	} else {
 
-		compile(program.print);
+		compile(parser(), program.print);
 
 	}
 

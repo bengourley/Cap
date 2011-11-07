@@ -1,0 +1,220 @@
+<!DOCTYPE html>  <html> <head>   <title>lexer.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="indent-handler.html">                 indent-handler.js               </a>                                           <a class="source" href="lexer.html">                 lexer.js               </a>                                           <a class="source" href="nodes.html">                 nodes.js               </a>                                           <a class="source" href="parser.html">                 parser.js               </a>                                           <a class="source" href="token.html">                 token.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               lexer.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Module dependencies.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">),</span>
+	<span class="nx">token</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./token&#39;</span><span class="p">);</span>
+
+
+<span class="kd">var</span> <span class="nx">lexer</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">spec</span><span class="p">)</span> <span class="p">{</span>
+	</pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p><code>lexer</code> and instance variables</p>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="kd">var</span> <span class="nx">lexer</span> <span class="o">=</span> <span class="p">{},</span>
+		<span class="nx">input</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+		<span class="nx">completeInput</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+		<span class="nx">indentStack</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">],</span>
+		<span class="nx">tokens</span> <span class="o">=</span> <span class="p">[],</span>
+		<span class="nx">tokenStash</span> <span class="o">=</span> <span class="p">[],</span>
+		<span class="nx">position</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+		<span class="nx">startOfFile</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+		<span class="nx">reservedWords</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;if&#39;</span><span class="p">,</span> <span class="s1">&#39;else&#39;</span><span class="p">,</span> <span class="s1">&#39;where&#39;</span><span class="p">],</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Methods</p>             </td>             <td class="code">               <div class="highlight"><pre>		<span class="nx">lex</span><span class="p">,</span>
+		<span class="nx">setInput</span><span class="p">,</span>
+		<span class="nx">advance</span><span class="p">,</span>
+		<span class="nx">next</span><span class="p">,</span>
+		<span class="nx">linearWhitespace</span><span class="p">,</span>
+		<span class="nx">determineIndent</span><span class="p">,</span>
+		<span class="nx">newline</span><span class="p">,</span>
+		<span class="nx">eof</span><span class="p">,</span>
+		<span class="nx">literal</span><span class="p">,</span>
+		<span class="nx">identifier</span><span class="p">,</span>
+		<span class="nx">number</span><span class="p">,</span>
+		<span class="nx">string</span><span class="p">,</span>
+		<span class="nx">single</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Expose <code>yytext</code> and <code>yylineno</code> to the parser</p>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="nx">lexer</span><span class="p">.</span><span class="nx">yytext</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+	<span class="nx">lexer</span><span class="p">.</span><span class="nx">yylineno</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+
+	<span class="nx">lex</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+		</pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Deal with the special case of whitespace at the
+start of a file, which would otherwise be consumed
+without error.</p>             </td>             <td class="code">               <div class="highlight"><pre>		<span class="k">if</span> <span class="p">(</span><span class="nx">startOfFile</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="p">(</span><span class="sr">/^[ \t]+/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">input</span><span class="p">))</span> <span class="p">{</span>
+				<span class="nx">tokenStash</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">token</span><span class="p">({</span>
+					<span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span>
+					<span class="nx">value</span> <span class="o">:</span> <span class="s1">&#39;File starts with an indent&#39;</span>
+				<span class="p">}));</span>
+			<span class="p">}</span>
+			<span class="nx">startOfFile</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+		<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>Set the token to return. Check in the <code>tokenStash</code>
+before reading in new input, in case more than one
+token was generate in a previous pass.</p>             </td>             <td class="code">               <div class="highlight"><pre>		<span class="kd">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">tokenStash</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span>
+			<span class="o">?</span> <span class="nx">tokenStash</span><span class="p">.</span><span class="nx">shift</span><span class="p">()</span>
+			<span class="o">:</span> <span class="nx">next</span><span class="p">();</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>If the next token is actually an array of tokens,
+store them in the <code>tokenStash</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre>		<span class="k">if</span> <span class="p">(</span><span class="nb">Array</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">t</span><span class="p">))</span> <span class="p">{</span>
+			<span class="nx">tokenStash</span> <span class="o">=</span> <span class="nx">tokenStash</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">t</span><span class="p">);</span>
+			<span class="nx">t</span> <span class="o">=</span> <span class="nx">tokenStash</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
+		<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Set <code>yytext</code> to the token's value. This is a shared
+variable that the generated parser looks in for the
+value of the current token.</p>             </td>             <td class="code">               <div class="highlight"><pre>		<span class="nx">lexer</span><span class="p">.</span><span class="nx">yytext</span> <span class="o">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">value</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>Return just the token's type.</p>             </td>             <td class="code">               <div class="highlight"><pre>		<span class="k">return</span> <span class="nx">t</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
+
+	<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>Sets the input of the <code>lexer</code> to
+the given string.</p>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="nx">setInput</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">input</span> <span class="o">=</span> <span class="nx">str</span><span class="p">;</span>
+		<span class="nx">completeInput</span> <span class="o">=</span> <span class="nx">str</span><span class="p">;</span>
+		<span class="k">return</span> <span class="nx">lexer</span><span class="p">;</span>
+	<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p>Discards <code>num</code> characters
+from the start of the input.</p>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="nx">advance</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">num</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">input</span> <span class="o">=</span> <span class="nx">input</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="nx">num</span><span class="p">);</span>
+		<span class="nx">position</span> <span class="o">+=</span> <span class="nx">num</span><span class="p">;</span>
+	<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <p>Retrieves the next token recognised on the input.</p>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="nx">next</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>Each of these methods only return a truthy value
+if they return a token. The order of these functions
+matter, since <code>linearWhitespace()</code> and <code>newline()</code> can
+consume input without returning anything.
+A call to <code>single()</code> will always return a token, which
+will be an allowed single character of the language, or
+an 'unrecognised character' error token.</p>             </td>             <td class="code">               <div class="highlight"><pre>		<span class="k">return</span> <span class="nx">linearWhitespace</span><span class="p">()</span>
+			<span class="o">||</span> <span class="nx">newline</span><span class="p">()</span>
+			<span class="o">||</span> <span class="nx">eof</span><span class="p">()</span>
+			<span class="o">||</span> <span class="nx">literal</span><span class="p">()</span>
+			<span class="o">||</span> <span class="nx">identifier</span><span class="p">()</span>
+			<span class="o">||</span> <span class="nx">number</span><span class="p">()</span>
+			<span class="o">||</span> <span class="nx">string</span><span class="p">()</span>
+			<span class="o">||</span> <span class="nx">single</span><span class="p">();</span>
+
+	<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Recognises linear whitespace: <code></code> and <code>\t</code></p>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="nx">linearWhitespace</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">res</span> <span class="o">=</span> <span class="sr">/^[ \t]+/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">input</span><span class="p">);</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">advance</span><span class="p">(</span><span class="nx">res</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">length</span><span class="p">);</span>
+		<span class="p">}</span>
+	<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p>Recognises a newline character and
+sends off the following whitespace
+to be analysed for indents.</p>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="nx">newline</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">res</span> <span class="o">=</span> <span class="sr">/^[\n\r\u2028\u2029]+([\t ]*)/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">input</span><span class="p">),</span> <span class="nx">indent</span><span class="p">,</span> <span class="nx">ts</span><span class="p">;</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">ts</span> <span class="o">=</span> <span class="p">[</span><span class="nx">token</span><span class="p">({</span> <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;vwhitespace&#39;</span><span class="p">})];</span>
+			<span class="nx">advance</span><span class="p">(</span><span class="nx">res</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">length</span><span class="p">);</span>
+			<span class="nx">lexer</span><span class="p">.</span><span class="nx">yylineno</span> <span class="o">+=</span> <span class="sr">/^[\n\r\u2028\u2029]+/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">res</span><span class="p">[</span><span class="mi">0</span><span class="p">])[</span><span class="mi">0</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span>
+			<span class="nx">indent</span> <span class="o">=</span> <span class="nx">res</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span></pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <p>Determine indent</p>             </td>             <td class="code">               <div class="highlight"><pre>			<span class="k">if</span> <span class="p">(</span><span class="nx">indent</span> <span class="o">!==</span> <span class="nx">indentStack</span><span class="p">[</span><span class="nx">indentStack</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span> <span class="p">{</span>
+				<span class="nx">ts</span> <span class="o">=</span> <span class="nx">determineIndent</span><span class="p">(</span><span class="nx">indent</span><span class="p">);</span>
+			<span class="p">}</span>
+			<span class="k">return</span> <span class="nx">ts</span><span class="p">;</span>
+		<span class="p">}</span>
+	<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <p>Recognises the end of the file</p>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="nx">eof</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">input</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="nx">token</span><span class="p">({</span> <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;$end&#39;</span> <span class="p">});</span>
+		<span class="p">}</span>
+	<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-19">&#182;</a>               </div>               <p>Analyses a change in indent and produces
+a token if required, which may turn out
+to be an indent, a newline or an error
+(inconsistent indentation).</p>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="nx">determineIndent</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">indentString</span><span class="p">)</span> <span class="p">{</span>
+
+		<span class="k">if</span> <span class="p">(</span><span class="nx">indentString</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">indentStack</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">))</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">indentStack</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">indentString</span><span class="p">);</span>
+			<span class="k">return</span> <span class="p">[</span>
+				<span class="nx">token</span><span class="p">({</span> <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;vwhitespace&#39;</span> <span class="p">}),</span>
+				<span class="nx">token</span><span class="p">({</span> <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;indent&#39;</span> <span class="p">}),</span>
+				<span class="nx">token</span><span class="p">({</span> <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;vwhitespace&#39;</span> <span class="p">})</span>
+			<span class="p">];</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+
+			<span class="kd">var</span> <span class="nx">dedentCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+			<span class="k">while</span> <span class="p">(</span><span class="nx">indentStack</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">!==</span> <span class="nx">indentString</span> <span class="o">&amp;&amp;</span> <span class="nx">indentStack</span><span class="p">.</span><span class="nx">pop</span><span class="p">())</span> <span class="p">{</span>
+				<span class="nx">dedentCount</span><span class="o">++</span><span class="p">;</span>
+			<span class="p">}</span>
+
+			<span class="k">if</span> <span class="p">(</span><span class="nx">indentStack</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">!==</span> <span class="nx">indentString</span><span class="p">)</span> <span class="p">{</span>
+				<span class="k">return</span> <span class="nx">token</span><span class="p">({</span> <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="nx">value</span> <span class="o">:</span> <span class="s1">&#39;Inconsistent indentation&#39;</span> <span class="p">});</span>
+			<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+				<span class="kd">var</span> <span class="nx">dedents</span> <span class="o">=</span> <span class="p">[</span><span class="nx">token</span><span class="p">({</span> <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;vwhitespace&#39;</span> <span class="p">})];</span>
+				<span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">dedentCount</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+					<span class="nx">dedents</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">token</span><span class="p">({</span> <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;dedent&#39;</span><span class="p">}),</span> <span class="nx">token</span><span class="p">({</span> <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;vwhitespace&#39;</span> <span class="p">}));</span>
+				<span class="p">}</span>
+				<span class="k">return</span> <span class="nx">dedents</span><span class="p">;</span>
+			<span class="p">}</span>
+
+		<span class="p">}</span>
+
+	<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <p>Recognises a literal: <code>object:</code>, <code>function:</code> or <code>array:</code></p>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="nx">literal</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">res</span> <span class="o">=</span> <span class="sr">/^(object|function|array):/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">input</span><span class="p">);</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">advance</span><span class="p">(</span><span class="nx">res</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">length</span><span class="p">);</span>
+			<span class="k">return</span> <span class="nx">token</span><span class="p">({</span> <span class="nx">type</span> <span class="o">:</span> <span class="nx">res</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;literal&#39;</span> <span class="p">});</span>
+		<span class="p">}</span>
+	<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-21">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-21">&#182;</a>               </div>               <p>Recognises an identifier eg. <code>foo</code>, <code>bar</code>.
+Also recognised reserved words by matching
+against the whitelist of reserved words.</p>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="nx">identifier</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">res</span> <span class="o">=</span> <span class="sr">/^([A-Z|a-z]+)[\W]/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">input</span><span class="p">);</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">advance</span><span class="p">(</span><span class="nx">res</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nx">length</span><span class="p">);</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nx">reservedWords</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">res</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">===</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+				<span class="k">return</span> <span class="nx">token</span><span class="p">({</span>
+					<span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;identifier&#39;</span><span class="p">,</span>
+					<span class="nx">value</span> <span class="o">:</span> <span class="nx">res</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+				<span class="p">});</span>
+			<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+				<span class="k">return</span> <span class="nx">token</span><span class="p">({</span> <span class="nx">type</span> <span class="o">:</span> <span class="nx">res</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">});</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-22">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-22">&#182;</a>               </div>               <p>Recognises a number eg. <code>12</code>, <code>3.142</code></p>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="nx">number</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">res</span> <span class="o">=</span> <span class="sr">/^\d+(\.?\d+)?/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">input</span><span class="p">);</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">advance</span><span class="p">(</span><span class="nx">res</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">length</span><span class="p">);</span>
+			<span class="k">return</span> <span class="nx">token</span><span class="p">({</span>
+				<span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;number&#39;</span><span class="p">,</span>
+				<span class="nx">value</span> <span class="o">:</span> <span class="nx">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="p">});</span>
+		<span class="p">}</span>
+	<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-23">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-23">&#182;</a>               </div>               <p>Recognises a string. e.g <code>'Hello, World!'</code></p>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="nx">string</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">res</span> <span class="o">=</span> <span class="sr">/^&#39;([^&#39;])*&#39;/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">input</span><span class="p">);</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">advance</span><span class="p">(</span><span class="nx">res</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">length</span><span class="p">);</span>
+			<span class="k">return</span> <span class="nx">token</span><span class="p">({</span>
+				<span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
+				<span class="nx">value</span> <span class="o">:</span> <span class="nx">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="p">});</span>
+		<span class="p">}</span>
+	<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-24">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-24">&#182;</a>               </div>               <p>Recognises any allowed single character.
+If this fails, create an error token
+with the offending character.</p>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="nx">single</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+		
+		<span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">input</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+		<span class="nx">advance</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+		<span class="k">switch</span> <span class="p">(</span><span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">case</span> <span class="s1">&#39;=&#39;</span><span class="o">:</span> <span class="k">return</span> <span class="nx">token</span><span class="p">({</span> <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;equals&#39;</span> <span class="p">});</span>
+		<span class="k">case</span> <span class="s1">&#39;.&#39;</span><span class="o">:</span> <span class="k">return</span> <span class="nx">token</span><span class="p">({</span> <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;dot&#39;</span> <span class="p">});</span>
+		<span class="k">case</span> <span class="s1">&#39;{&#39;</span><span class="o">:</span> <span class="k">return</span> <span class="nx">token</span><span class="p">({</span> <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;leftbrace&#39;</span> <span class="p">});</span>
+		<span class="k">case</span> <span class="s1">&#39;}&#39;</span><span class="o">:</span> <span class="k">return</span> <span class="nx">token</span><span class="p">({</span> <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;rightbrace&#39;</span> <span class="p">});</span>
+		<span class="k">case</span> <span class="s1">&#39;[&#39;</span><span class="o">:</span> <span class="k">return</span> <span class="nx">token</span><span class="p">({</span> <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;leftsquarebracket&#39;</span> <span class="p">});</span>
+		<span class="k">case</span> <span class="s1">&#39;]&#39;</span><span class="o">:</span> <span class="k">return</span> <span class="nx">token</span><span class="p">({</span> <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;rightsquarebracket&#39;</span> <span class="p">});</span>
+		<span class="k">case</span> <span class="s1">&#39;&quot;&#39;</span><span class="o">:</span> <span class="k">return</span> <span class="nx">token</span><span class="p">({</span> <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;speechmark&#39;</span> <span class="p">});</span>
+		<span class="k">case</span> <span class="s1">&#39;~&#39;</span><span class="o">:</span> <span class="k">return</span> <span class="nx">token</span><span class="p">({</span> <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;tilde&#39;</span> <span class="p">});</span>
+		<span class="k">case</span> <span class="s1">&#39;+&#39;</span><span class="o">:</span> <span class="k">return</span> <span class="nx">token</span><span class="p">({</span> <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;plus&#39;</span> <span class="p">});</span>
+		<span class="k">case</span> <span class="s1">&#39;(&#39;</span><span class="o">:</span> <span class="k">return</span> <span class="nx">token</span><span class="p">({</span> <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;leftbracket&#39;</span> <span class="p">});</span>
+		<span class="k">case</span> <span class="s1">&#39;)&#39;</span><span class="o">:</span> <span class="k">return</span> <span class="nx">token</span><span class="p">({</span> <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;rightbracket&#39;</span> <span class="p">});</span>
+		<span class="k">case</span> <span class="s1">&#39;,&#39;</span><span class="o">:</span> <span class="k">return</span> <span class="nx">token</span><span class="p">({</span> <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;comma&#39;</span> <span class="p">});</span>
+		<span class="k">default</span><span class="o">:</span> <span class="k">return</span> <span class="nx">token</span><span class="p">({</span>
+			<span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span>
+			<span class="nx">value</span> <span class="o">:</span> <span class="s1">&#39;Unrecognized character: &#39;</span> <span class="o">+</span> <span class="nx">c</span>
+		<span class="p">});</span>
+		<span class="p">}</span>
+
+	<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-25">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-25">&#182;</a>               </div>               <p>Expose <code>lex</code> and <code>setInput</code> to the parser</p>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="nx">lexer</span><span class="p">.</span><span class="nx">lex</span> <span class="o">=</span> <span class="nx">lex</span><span class="p">;</span>
+	<span class="nx">lexer</span><span class="p">.</span><span class="nx">setInput</span> <span class="o">=</span> <span class="nx">setInput</span><span class="p">;</span>
+
+	<span class="k">return</span> <span class="nx">lexer</span><span class="p">;</span>
+
+<span class="p">};</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">lexer</span><span class="p">;</span>
+
+<span class="cm">/*fs.readFile(&#39;example.cap&#39;, &#39;utf8&#39;, function (err, data) {</span>
+<span class="cm">	if (err) {</span>
+<span class="cm">		throw err;</span>
+<span class="cm">	} else {</span>
+<span class="cm">		var l = lexer();</span>
+<span class="cm">		l.setInput(data);</span>
+<span class="cm">		var t;</span>
+<span class="cm">		t = l.lex();</span>
+<span class="cm">		console.log(t);</span>
+<span class="cm">		while (t !== &#39;$end&#39;) {</span>
+<span class="cm">			t = l.lex();</span>
+<span class="cm">			console.log(t);</span>
+<span class="cm">		}</span>
+<span class="cm">	}</span>
+<span class="cm">});*/</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
