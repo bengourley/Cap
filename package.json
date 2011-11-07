@@ -6,10 +6,7 @@
 	{
 		"commander" : ">0",
 		"jison" : ">0",
-		"jade" : ">0",
-		"stylus" : ">0",
-		"markdown" : ">0",
-		"nib" : ">0"
+		"markdown" : ">0"
 	},
 "main" : "docs/app.js"
 }
