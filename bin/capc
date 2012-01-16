@@ -6,9 +6,6 @@
 
 var program = require('commander'),
 	fs = require('fs'),
-	Parser = require('jison').Parser,
-	lexer = require('../lib/lexer'),
-	nodes = require('../lib/nodes'),
 	parser = require('../lib/parser.js');
 
 program

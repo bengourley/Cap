@@ -7,12 +7,7 @@
  * Module dependencies
  */
 
-var parser = require('Parser').parser,
-	lexer = require('Lexer'),
-	nodes = require('Nodes');
-
-parser.lexer =  lexer();
-parser.yy.nodes = nodes;
+var parser = require('parser')();
 
 /*
  * Tests
@@ -20,6 +15,6 @@ parser.yy.nodes = nodes;
 
 exports['empty program'] = function (beforeExit, assert) {
 
-	assert.eql(parser.parse('').compile(), '(function () {\n}());');
+  assert.eql(parser.parse('').compile(), '(function () {\n}());');
 
 };

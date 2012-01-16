@@ -107,11 +107,11 @@ exports['numbers'] = function (beforeExit, assert) {
 
 exports['literals'] = function (beforeExit, assert) {
 
-	var lexer = newLexerWithInput('object: function: array:\n');
+	var lexer = newLexerWithInput('obj: fun: arr:\n');
 
-	assert.equal(lexer.lex().type, 'objectliteral');
-	assert.equal(lexer.lex().type, 'functionliteral');
-	assert.equal(lexer.lex().type, 'arrayliteral');
+	assert.equal(lexer.lex().type, 'objliteral');
+	assert.equal(lexer.lex().type, 'funliteral');
+	assert.equal(lexer.lex().type, 'arrliteral');
 
 };
 

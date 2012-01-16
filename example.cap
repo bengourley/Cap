@@ -1,8 +1,2 @@
-add = fun: a b
-  a + b
-
-add 5 3
-
-addfive = add 5
-
-addfive 10
+while jim
+	console.log 'jimmy'
