@@ -1,2 +1,2 @@
-while jim
-	console.log 'jimmy'
+bing = obj:
+	key = 'value'
