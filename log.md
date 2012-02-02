@@ -46,7 +46,7 @@ Progress: Amended parser to use invocation by juxtaposition. Big refactor.
 
 Objectives: Finding difficulty avoiding ambiguity in parser generator, write parser by hand.
 
-*06/11/11*
+*07/11/11*
 
 No meeting.
 
@@ -54,3 +54,57 @@ Progress: Foundations of parser written by hand.
 
 Objectives: Add features to parser.
 
+*14/11/11*
+
+No meeting.
+
+Progress: Added features to parser.
+
+Objectives: Write interim report.
+
+*21/11/11*
+
+No meeting.
+
+Progress: Report written and handed in.
+
+Objectives: Away following week – no objectives.
+
+
+*28/11/11*
+
+Away.
+
+*5/12/11*
+
+No meeting.
+
+
+--- Christmas break ---
+
+
+*16/01/12*
+
+Met with supervisor.
+
+Progress: None
+
+Objectives: Complete compiler.
+
+
+*23/01/12*
+
+No meeting.
+
+Progress: Progress on compiler, but realised add complexity needed.
+
+Objectives: Tests have been lagging, catch up.
+
+
+*30/01/12*
+
+No meeting.
+
+Progress: Updated tests. Moved to new test framework.
+
+Objectives: Continue progress on compiler, factor out code generation and because a modifier needs to modify the AST
