@@ -6,7 +6,8 @@
 
 var program = require('commander'),
 	fs = require('fs'),
-	parser = require('../lib/parser.js');
+	parser = require('../lib/parser.js'),
+	indentHandler = require('../lib/indent-handler.js')();
 
 program
 	.version('0.0.1')
@@ -29,12 +30,22 @@ var compile = function (p, print) {
 	fs.readFile(program.args[0], 'utf8', function (err, data) {
 	
 		try {
-			var AST = p.parse(data);
-			//console.log(AST);
-			console.log(print ? AST.print() : AST.compile());
+			
+			var node = p.parse(data);
+
+			(function walkNode(node) {
+				console.log(indentHandler.getIndent() + node.print());
+				indentHandler.nextIndent();
+				node.childNodes.forEach(function (childNode) {
+					walkNode(childNode);
+				});
+				indentHandler.prevIndent();
+			}(node));
+
+			//console.log(print ? AST.print() : AST.compile());
 		} catch (e) {
 			// Catch a parser error for non-ugly output
-			if (/^Parse error/.test(e.message)) {
+			if ('ParseError' === e.type) {
 				console.log(e.message);
 			} else {
 				// But throw any other exception
