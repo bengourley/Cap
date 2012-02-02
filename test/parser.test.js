@@ -1,20 +1,19 @@
 /*
  * Tests for lib/Parser.js
- * Run with `expresso -I lib`
+ * Run with `jake test`
  */
 
 /*
  * Module dependencies
  */
 
-var parser = require('parser')();
+var parser = require('../lib/parser')(),
+    assert = require('assert');
 
 /*
  * Tests
  */
 
-exports['empty program'] = function (beforeExit, assert) {
-
-  assert.eql(parser.parse('').compile(), '(function () {\n}());');
-
-};
+describe('parser', function () {
+  it('should parse correctly!');
+});

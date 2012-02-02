@@ -1,13 +1,14 @@
 /*
- * Tests for lib/Lexer.js
- * Run with `expresso -I lib`
+ * Tests for lib/lexer.js
+ * Run with `jake test`
  */
 
 /*
  * Module dependencies
  */
 
-var lexer = require('lexer');
+var lexer = require('../lib/lexer'),
+		assert = require('assert');
 
 /*
  * Convenience function for creating lexers
@@ -22,126 +23,94 @@ var newLexerWithInput = function (input) {
  * Tests
  */
 
-exports['empty input'] = function (beforeExit, assert) {
+describe('lexer', function () {
 
-	var lexer = newLexerWithInput('');
+	it('should return a whitespace token followed by an ' +
+			'eof token when given empty input', function () {
 
-	assert.equal(lexer.lex().type, 'eof');
+		var lexer = newLexerWithInput('');
+		assert.equal(lexer.lex().type, 'vwhitespace');
+		assert.equal(lexer.lex().type, 'eof');
 
-};
+	});
 
-exports['keyword vs. identifier'] = function (beforeExit, assert) {
+	it('should distinguish between a keyword ' +
+			'and an identifier when an identifier starts with ' +
+				'or ends with a keyword', function () {
 
-	var lexer = newLexerWithInput('if ift gif ');
+		var lexer = newLexerWithInput('if ift gif ');
 
-	assert.equal(lexer.lex().type, 'if');
-	assert.equal(lexer.lex().type, 'identifier');
-	assert.equal(lexer.lex().type, 'identifier');
+		assert.equal(lexer.lex().type, 'if');
+		assert.equal(lexer.lex().type, 'identifier');
+		assert.equal(lexer.lex().type, 'identifier');
 
-};
+	});
 
-exports['simple indentation'] = function (beforeExit, assert) {
-	var lexer = newLexerWithInput('x\n  x\nx\n');
+	it('should handle simple indentation', function () {
+		
+		var lexer = newLexerWithInput('x\n  x\nx\n');
 
-	assert.equal(lexer.lex().type, 'identifier');
-	assert.equal(lexer.lex().type, 'vwhitespace');
-	assert.equal(lexer.lex().type, 'indent');
-	assert.equal(lexer.lex().type, 'vwhitespace');
-	assert.equal(lexer.lex().type, 'identifier');
-	assert.equal(lexer.lex().type, 'vwhitespace');
-	assert.equal(lexer.lex().type, 'dedent');
-	assert.equal(lexer.lex().type, 'vwhitespace');
-	assert.equal(lexer.lex().type, 'identifier');
-	assert.equal(lexer.lex().type, 'vwhitespace');
-	assert.equal(lexer.lex().type, 'eof');
+		assert.equal(lexer.lex().type, 'identifier');
+		assert.equal(lexer.lex().type, 'vwhitespace');
+		assert.equal(lexer.lex().type, 'indent');
+		assert.equal(lexer.lex().type, 'vwhitespace');
+		assert.equal(lexer.lex().type, 'identifier');
+		assert.equal(lexer.lex().type, 'vwhitespace');
+		assert.equal(lexer.lex().type, 'dedent');
+		assert.equal(lexer.lex().type, 'vwhitespace');
+		assert.equal(lexer.lex().type, 'identifier');
+		assert.equal(lexer.lex().type, 'vwhitespace');
+		assert.equal(lexer.lex().type, 'eof');
+		
+	});
 
-};
+	it('should consolidate consecutive newlines', function () {
+		
+		var lexer = newLexerWithInput('x\n\nx\n');
 
-exports['consecutive newlines'] = function (beforeExit, assert) {
+		assert.equal(lexer.lex().type, 'identifier');
+		assert.equal(lexer.lex().type, 'vwhitespace');
+		assert.equal(lexer.lex().type, 'identifier');
 
-	var lexer = newLexerWithInput('x\n\nx\n');
+	});
 
-	assert.equal(lexer.lex().type, 'identifier');
-	assert.equal(lexer.lex().type, 'vwhitespace');
-	assert.equal(lexer.lex().type, 'identifier');
+	it('should return an error token if input ' +
+			'starts with an indent', function () {
 
-};
+		var lexer = newLexerWithInput('  x\n');
+		assert.equal(lexer.lex().type, 'error');
 
-exports['inconsistent indentation'] = function (beforeExit, assert) {
-	
-	var lexer = newLexerWithInput('x\n  x\n\tx');
+	});
 
-	assert.equal(lexer.lex().type, 'identifier');
-	assert.equal(lexer.lex().type, 'vwhitespace');
-	assert.equal(lexer.lex().type, 'indent');
-	assert.equal(lexer.lex().type, 'vwhitespace');
-	assert.equal(lexer.lex().type, 'identifier');
-	assert.equal(lexer.lex().type, 'error');
+	it('should identify a string', function () {
 
-};
+		var lexer = newLexerWithInput('\'Hello, World!\'\n');
+		assert.equal(lexer.lex().type, 'string');
 
-exports['starts with indent'] = function (beforeExit, assert) {
+	});
 
-	var lexer = newLexerWithInput('  x\n');
+	it('should identify a string with escaped single quotes');
 
-	assert.equal(lexer.lex().type, 'error');
+	it('should identify a number', function () {
 
-};
+		var lexer = newLexerWithInput('12345 0.99\n');
 
-exports['strings'] = function (beforeExit, assert) {
+		assert.equal(lexer.lex().type, 'number');
+		assert.equal(lexer.lex().type, 'number');
 
-	var lexer = newLexerWithInput('\'Hello, World!\'\n');
+	});
 
-	assert.equal(lexer.lex().type, 'string');
+	it('should identify literals', function () {
 
-};
+		var lexer = newLexerWithInput('obj: fun: arr:\n');
 
-exports['numbers'] = function (beforeExit, assert) {
+		assert.equal(lexer.lex().type, 'objliteral');
+		assert.equal(lexer.lex().type, 'funliteral');
+		assert.equal(lexer.lex().type, 'arrliteral');
 
-	var lexer = newLexerWithInput('12345 0.99\n');
+	});
 
-	assert.equal(lexer.lex().type, 'number');
-	assert.equal(lexer.lex().type, 'number');
+	it('should itentify single characters (including errors)');
 
-};
-
-exports['literals'] = function (beforeExit, assert) {
-
-	var lexer = newLexerWithInput('obj: fun: arr:\n');
-
-	assert.equal(lexer.lex().type, 'objliteral');
-	assert.equal(lexer.lex().type, 'funliteral');
-	assert.equal(lexer.lex().type, 'arrliteral');
-
-};
-
-/*exports['show position'] = function (beforeExit, assert) {
-	
-	var lexer = newLexerWithInput('some program here... \n\n\n'),
-		position = lexer.showPosition();
-
-	assert.type(position, 'string');
-	assert.length(position, 20);
-
-};*/
-
-/*exports['single characters'] = function (beforeExit, assert) {
-
-	var lexer = newLexerWithInput('[]{}=."~+()¶\n');
-
-	assert.equal(lexer.lex().type, 'leftsquarebracket');
-	assert.equal(lexer.lex().type, 'rightsquarebracket');
-	assert.equal(lexer.lex().type, 'leftbrace');
-	assert.equal(lexer.lex().type, 'rightbrace');
-	assert.equal(lexer.lex().type, 'equals');
-	assert.equal(lexer.lex().type, 'dot');
-	assert.equal(lexer.lex().type, 'speechmark');
-	assert.equal(lexer.lex().type, 'tilde');
-	assert.equal(lexer.lex().type, 'plus');
-	assert.equal(lexer.lex().type, 'leftbracket');
-	assert.equal(lexer.lex().type, 'rightbracket');
-	assert.equal(lexer.lex().type, 'error');
-
-};*/
-
+});
 
