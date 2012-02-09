@@ -100,15 +100,7 @@ describe('lexer', function () {
 
 	});
 
-	it('should identify literals', function () {
-
-		var lexer = newLexerWithInput('obj: fun: arr:\n');
-
-		assert.equal(lexer.lex().type, 'objliteral');
-		assert.equal(lexer.lex().type, 'funliteral');
-		assert.equal(lexer.lex().type, 'arrliteral');
-
-	});
+	it('should identify literals');
 
 	it('should itentify single characters (including errors)');
 

@@ -6,8 +6,8 @@
 
 var program = require('commander'),
 	fs = require('fs'),
-	parser = require('../lib/parser.js'),
-	indentHandler = require('../lib/indent-handler.js')();
+	parser = require('../lib/parser')(),
+	generator = require('../lib/generator')();
 
 program
 	.version('0.0.1')
@@ -25,24 +25,18 @@ program
 	)
 	.parse(process.argv);
 
-var compile = function (p, print) {
+
+if (!program.args[0]) {
+	console.log('No file supplied!');
+} else {
 
 	fs.readFile(program.args[0], 'utf8', function (err, data) {
 	
 		try {
 			
-			var node = p.parse(data);
+			var ast = parser.parse(data);
+			generator.generate(ast);
 
-			(function walkNode(node) {
-				console.log(indentHandler.getIndent() + node.print());
-				indentHandler.nextIndent();
-				node.childNodes.forEach(function (childNode) {
-					walkNode(childNode);
-				});
-				indentHandler.prevIndent();
-			}(node));
-
-			//console.log(print ? AST.print() : AST.compile());
 		} catch (e) {
 			// Catch a parser error for non-ugly output
 			if ('ParseError' === e.type) {
@@ -54,21 +48,5 @@ var compile = function (p, print) {
 		}
 
 	});
-};
-
-if (!program.args[0]) {
-	console.log('No file supplied!');
-} else {
-
-	if (program.grammar) {
-		fs.readFile(program.grammar, 'utf8', function (err, data) {
-			var p = parser();
-			compile(p, program.print);
-		});
-	} else {
-
-		compile(parser(), program.print);
-
-	}
 
 }

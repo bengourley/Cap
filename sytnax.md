@@ -21,12 +21,13 @@ Function:
 drive = |x y z|
   console.log x : y : z
 
-matchedset.bind 'click' cb where
-  cb = /e/
-    console.log e : ' event happened'
+element.css props ...
+      props = {}
+        height = 10
+        width = 10
 
 
-if x > 10 -- print 'yeah!' --
+consider: if x > 10 -- print 'yeah!' --
 
 if x > 10
   print 'yeah!'
