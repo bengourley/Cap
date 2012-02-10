@@ -19,34 +19,16 @@ program
 		'-t, --tree',
 		'pretty print the nodes in the AST instead of compiling to file'
 	)
-	.option(
-		'-g, --grammar [grammar]',
-		'generate a parser on the fly with the given grammar file'
-	)
 	.parse(process.argv);
-
 
 if (!program.args[0]) {
 	console.log('No file supplied!');
 } else {
 
 	fs.readFile(program.args[0], 'utf8', function (err, data) {
-	
-		try {
 			
 			var ast = parser.parse(data);
-			generator.generate(ast);
-
-		} catch (e) {
-			// Catch a parser error for non-ugly output
-			if ('ParseError' === e.type) {
-				console.log(e.message);
-			} else {
-				// But throw any other exception
-				throw e;
-			}
-		}
+			program.tree ? generator.printTree(ast) : generator.generate(ast);
 
 	});
-
 }

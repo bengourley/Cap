@@ -1,4 +1,10 @@
-foo = []
-  bar
-  baz
-  biz
+vec = []
+  bits
+  and
+  bobs
+  []
+    and
+    nested
+    robs
+  {}
+  band
