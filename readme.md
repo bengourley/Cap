@@ -7,18 +7,20 @@ functional and prototypical programming with an elegant and succint syntax.
 
 # Quickstart
 
-To get up and running you need node.js and npm. Go get them first.
+The cap compiler is implemented in (node.js)[http://nodejs.org], get that first.
 
-Then do:
+Then:
 
-	cd /path/to/where/you/want/
 	git clone git@github.com:bengourley/Cap.git
 	cd Cap
 	npm install
 
+You can now use the compiler at `./bin/capc`
+  
+  Usage: capc [options] <source-file>
 
-# Bindings to Javascript objects
+  Options:
 
-- console
-- Math
-- DOM
+    -h, --help       output usage information
+    -V, --version    output the version number
+    -p, --printtree  print the syntax tree instead of compiling

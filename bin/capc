@@ -12,12 +12,8 @@ var program = require('commander'),
 program
 	.version('0.0.1')
 	.option(
-		'-p, --print',
-		'print the compiled js instead of outputting to file'
-	)
-	.option(
-		'-t, --tree',
-		'pretty print the nodes in the AST instead of compiling to file'
+		'-p, --printtree',
+		'print the syntax tree instead of compiling'
 	)
 	.parse(process.argv);
 
