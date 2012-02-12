@@ -100,20 +100,6 @@ describe('lexer', function () {
 
 	});
 
-	it('should work with indentation', function () {
-
-		var lexer = newLexerWithInput(
-			require('fs').readFileSync('./example.cap')
-		);
-
-		var t = lexer.lex();
-		while (t.type !== 'eof') {
-			console.log(t);
-			t = lexer.lex();
-		}
-
-	});
-
 	it('should identify single characters (including errors)');
 
 });
