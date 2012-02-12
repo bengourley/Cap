@@ -7,7 +7,7 @@ functional and prototypical programming with an elegant and succint syntax.
 
 # Quickstart
 
-The cap compiler is implemented in (node.js)[http://nodejs.org], get that first.
+The cap compiler is implemented in [node.js](http://nodejs.org), get that first.
 
 Then:
 
