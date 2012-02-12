@@ -100,9 +100,21 @@ describe('lexer', function () {
 
 	});
 
-	it('should identify literals');
+	it('should work with indentation', function () {
 
-	it('should itentify single characters (including errors)');
+		var lexer = newLexerWithInput(
+			require('fs').readFileSync('./example.cap')
+		);
+
+		var t = lexer.lex();
+		while (t.type !== 'eof') {
+			console.log(t);
+			t = lexer.lex();
+		}
+
+	});
+
+	it('should identify single characters (including errors)');
 
 });
 

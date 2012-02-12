@@ -28,7 +28,7 @@ describe('token', function () {
 
   it('should have no value for tokens that don\'t require a value', function () {
     var t = token({ type : 'eof' });
-    assert.equal(t.value, undefined);
+    assert.equal(t.value, '');
   });
 
 });

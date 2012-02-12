@@ -1,10 +1,4 @@
-vec = []
-  bits
-  and
-  bobs
-  []
-    and
-    nested
-    robs
-  {}
-  band
+if 1 + 1 > 2
+  something went wrong
+else
+  eveything is 'normal'
