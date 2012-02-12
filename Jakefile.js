@@ -1,5 +1,11 @@
+/*
+ * Module dependencies
+ */
 var spawn = require('child_process').spawn;
 
+/*
+ * Run tests: uses the mocha TDD framework
+ */
 desc('Run tests');
 task('test', function () {
   var test = spawn('./node_modules/mocha/bin/mocha',

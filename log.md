@@ -108,3 +108,20 @@ No meeting.
 Progress: Updated tests. Moved to new test framework.
 
 Objectives: Continue progress on compiler, factor out code generation and because a modifier needs to modify the AST
+
+*6/02/12*
+
+No meeting.
+
+Progress: Code generation moved into generators object.
+
+Objectives: Continue adding features to generator
+
+
+*13/02/12*
+
+No meeting.
+
+Progress: Adding functionality to generators.
+
+Objectives: Implement block scoping and 'local' to prevent overwriting vars outside scope
