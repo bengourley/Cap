@@ -2,7 +2,8 @@ var spawn = require('child_process').spawn;
 
 desc('Run tests');
 task('test', function () {
-  var test = spawn('mocha', ['--ui', 'bdd', '--colors', '--reporter', 'spec']);
+  var test = spawn('./node_modules/mocha/bin/mocha',
+      ['--ui', 'bdd', '--colors', '--reporter', 'spec']);
 
   function print(out) {
     process.stdout.write(out);

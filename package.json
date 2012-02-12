@@ -1,10 +1,12 @@
 {
-"name" : "Cap",
-"version" : "0.0.1",
-"private" : true,
-"dependencies" :
-	{
-		"commander" : ">0",
-    "uglify-js" : ">0"
-	}
+  "name" : "Cap",
+  "version" : "0.0.1",
+  "private" : true,
+  "dependencies" : {
+  		"commander" : ">0",
+      "uglify-js" : ">0"
+  },
+  "devDependencies" : {
+    "mocha" : ">0"
+  }
 }
