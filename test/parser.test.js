@@ -185,6 +185,7 @@ describe('parser', function () {
   });
 
   it('should parse an assignment', function () {
+
     var program = createParser().parse('a = b');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'assignment');
@@ -198,6 +199,10 @@ describe('parser', function () {
     assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
     assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'reference');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'call');
+
+    assert.throws(function () {
+      program = createParser().parse('a = []\n  foo\n  bar\n10');
+    })
 
   });
 
