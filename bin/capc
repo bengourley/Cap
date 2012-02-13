@@ -24,7 +24,7 @@ if (!program.args[0]) {
 	fs.readFile(program.args[0], 'utf8', function (err, data) {
 			
 			var ast = parser.parse(data);
-			program.tree ? generator.printTree(ast) : generator.generate(ast);
+			program.printtree ? generator.printTree(ast) : generator.generate(ast);
 
 	});
 }
