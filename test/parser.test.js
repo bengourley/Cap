@@ -84,7 +84,7 @@ describe('parser', function () {
 
   });
 
-  it('should parse algebraic and boolean expressions', function () {
+  it('should parse algebraic expressions', function () {
     
     var program = createParser().parse('a + b');
     assert.equal(program.childNodes[0].childNodes.length, 1);
@@ -118,7 +118,11 @@ describe('parser', function () {
     assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'reference');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'reference');
 
-    program = createParser().parse('a & b');
+  });
+
+  it('should parse boolean expressions', function () {
+
+    var program = createParser().parse('a & b');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'operator');
     assert.equal(program.childNodes[0].childNodes[0].meta.op, '&');
@@ -138,6 +142,17 @@ describe('parser', function () {
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'operator');
     assert.equal(program.childNodes[0].childNodes[0].meta.op, '===');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'reference');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'reference');
+
+  });
+
+  it('should parse concatenations', function () {
+
+    var program = createParser().parse('a : b');
+    assert.equal(program.childNodes[0].childNodes.length, 1);
+    assert.equal(program.childNodes[0].childNodes[0].type, 'concatenation');
     assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
     assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'reference');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'reference');
