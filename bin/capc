@@ -30,11 +30,10 @@ if (!program.args[0]) {
 
 			try {
 				var ast = parser.parse(data);
-				if (program.printtree) {
-					generator.printTree(ast);
-				} else {
-					generator.generate(ast);
-				}
+				console.log(generator.generate({
+					ast : ast,
+					tree : program.printtree
+				}));
 				} catch (e) {
 					if (['ParseError', 'SemanticError'].indexOf(e.type) === -1) throw e;
 					console.log(e.message);
