@@ -57,26 +57,34 @@ describe('parser', function () {
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'reference');
     assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 1);
-    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'leaf');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'identifier');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[0].value, 'a');
 
     program = createParser().parse('a.b');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'reference');
     assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
-    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'leaf');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'identifier');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[0].value, 'a');
-    assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'leaf');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'identifier');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].value, 'b');
 
     program = createParser().parse('(((a.b)))');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'reference');
     assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
-    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'leaf');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'identifier');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[0].value, 'a');
-    assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'leaf');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'identifier');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].value, 'b');
+
+    program = createParser().parse('(a b).c');
+    assert.equal(program.childNodes[0].childNodes.length, 1);
+    assert.equal(program.childNodes[0].childNodes[0].type, 'reference');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'call');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'identifier');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[1].value, 'c');
 
     assert.throws(function () {
       program = createParser().parse('a.');
@@ -199,7 +207,7 @@ describe('parser', function () {
 
   });
 
-  it('should parse an assignment', function () {
+  it('should parse assignments', function () {
 
     var program = createParser().parse('a = b');
     assert.equal(program.childNodes[0].childNodes.length, 1);
@@ -217,7 +225,48 @@ describe('parser', function () {
 
     assert.throws(function () {
       program = createParser().parse('a = []\n  foo\n  bar\n10');
-    })
+    });
+
+  });
+
+  it('should parse vector literals', function () {
+
+    var program = createParser().parse('[]');
+    assert.equal(program.childNodes[0].childNodes.length, 1);
+    assert.equal(program.childNodes[0].childNodes[0].type, 'vectorLiteral');
+
+    program = createParser().parse('[]\n  1\n  2\n  3');
+    assert.equal(program.childNodes[0].childNodes.length, 1);
+    assert.equal(program.childNodes[0].childNodes[0].type, 'vectorLiteral');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'expressionList');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].childNodes.length, 3);
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].childNodes[0].type, 'leaf');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].childNodes[0].value, 1);
+
+  });
+
+  it('should parse object literals', function () {
+
+    var program = createParser().parse('{}');
+    assert.equal(program.childNodes[0].childNodes.length, 1);
+    assert.equal(program.childNodes[0].childNodes[0].type, 'objectLiteral');
+
+    program = createParser().parse('{}\n  a = 1\n  a = 2\n  a = 3');
+    assert.equal(program.childNodes[0].childNodes.length, 1);
+    assert.equal(program.childNodes[0].childNodes[0].type, 'objectLiteral');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'assignmentList');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].childNodes.length, 3);
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].childNodes[0].type, 'assignment');
+
+  });
+
+  it('should parse function literals', function () {
+
+    var program = createParser().parse('||');
+    assert.equal(program.childNodes[0].childNodes.length, 1);
+    assert.equal(program.childNodes[0].childNodes[0].type, 'functionLiteral');
+
+    program = createParser().parse('||\n  1 * 1');
 
   });
 
