@@ -6,8 +6,9 @@
 
 var program = require('commander'),
 	fs = require('fs'),
-	parser = require('../lib/parser')(),
-	generator = require('../lib/generator')(parser);
+	createParser = require('../lib/parser'),
+	createGenerator = require('../lib/generator'),
+	createErrorReporter = require('../lib/errorReporter');
 
 program
 	.version('0.0.1')
@@ -22,13 +23,22 @@ if (!program.args[0]) {
 } else {
 
 	fs.readFile(program.args[0], 'utf8', function (err, data) {
-			
-			var ast = parser.parse(data);
-			if (program.printtree) {
-				generator.printTree(ast);
-			} else {
-				generator.generate(ast);
-			}
+
+			var errorReporter = createErrorReporter(data),
+					parser = createParser(errorReporter),
+					generator = createGenerator(parser, errorReporter);
+
+			try {
+				var ast = parser.parse(data);
+				if (program.printtree) {
+					generator.printTree(ast);
+				} else {
+					generator.generate(ast);
+				}
+				} catch (e) {
+					if (['ParseError', 'SemanticError'].indexOf(e.type) === -1) throw e;
+					console.log(e.message);
+				}
 
 	});
 }
