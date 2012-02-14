@@ -7,7 +7,7 @@
 var program = require('commander'),
 	fs = require('fs'),
 	parser = require('../lib/parser')(),
-	generator = require('../lib/generator')();
+	generator = require('../lib/generator')(parser);
 
 program
 	.version('0.0.1')
