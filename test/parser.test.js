@@ -223,9 +223,8 @@ describe('parser', function () {
     assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'reference');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'call');
 
-    assert.throws(function () {
-      program = createParser().parse('a = []\n  foo\n  bar\n10');
-    });
+    program = createParser().parse('a = []\n  foo\n  bar\n10');
+    assert.equal(program.childNodes[0].childNodes.length, 2);
 
   });
 
@@ -267,6 +266,15 @@ describe('parser', function () {
     assert.equal(program.childNodes[0].childNodes[0].type, 'functionLiteral');
 
     program = createParser().parse('||\n  1 * 1');
+
+  });
+
+  it('should not collect expressions after literals', function () {
+      
+      var program = createParser().parse('|x|\n  x + 10\n10+10');
+      assert.equal(program.childNodes[0].childNodes.length, 2);
+      assert.equal(program.childNodes[0].childNodes[0].type, 'functionLiteral');
+      assert.equal(program.childNodes[0].childNodes[1].type, 'operator');
 
   });
 
