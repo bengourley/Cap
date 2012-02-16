@@ -16,13 +16,25 @@ program
 	)
 	.option(
 		'-p, --print',
-		'print the syntax tree instead of compiling'
+		'print the output instead of writing to file'
 	)
 	.option(
 		'-c, --compress',
 		'compress the output'
-	)
-	.parse(process.argv);
+	);
+
+
+// Custom help
+program.on('--help', function(){
+  console.log('  Example:');
+  console.log('');
+  console.log('    $ capc example.cap');
+  console.log('');
+  console.log('    Compiles example.cap -> example.cap.js');
+  console.log('');
+});
+
+program.parse(process.argv);
 
 if (!program.args[0]) {
 	
@@ -30,14 +42,36 @@ if (!program.args[0]) {
 
 } else {
 
+	// Read the file from the path supplied
 	fs.readFile(program.args[0], 'utf8', function (err, data) {
+
+		if (err) {
+			if (err.code === 'ENOENT') {
+				console.log('No file at `' + program.args[0] + '`');
+				return;
+			}
+		} else {
+			throw err;
+		}
 		
 		var output = createCompiler().compile(data, {
 			tree : program.printtree,
 			compress : program.compress
 		});
 
-		console.log(output);
+		if (program.print) {
+			
+			console.log(output);
+
+		} else {
+			fs.writeFile(program.args[0] + '.js', output, function (err) {
+				
+				if (err) throw err;
+
+				console.log(program.args[0] + ' -> ' + program.args[0] + '.js');
+
+			});
+		}
 
 	});
 
