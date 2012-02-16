@@ -5,41 +5,40 @@
  */
 
 var program = require('commander'),
-	fs = require('fs'),
-	createLexer = require('../lib/lexer'),
-	createParser = require('../lib/parser'),
-	createGenerator = require('../lib/generator'),
-	createErrorReporter = require('../lib/errorReporter');
+		fs = require('fs'),
+		createCompiler = require('../lib/compiler');
 
 program
 	.version('0.0.1')
 	.option(
-		'-p, --printtree',
+		'-t, --printtree',
+		'print the syntax tree instead of compiling (forces --print)'
+	)
+	.option(
+		'-p, --print',
 		'print the syntax tree instead of compiling'
+	)
+	.option(
+		'-c, --compress',
+		'compress the output'
 	)
 	.parse(process.argv);
 
 if (!program.args[0]) {
+	
 	console.log('No file supplied!');
+
 } else {
 
 	fs.readFile(program.args[0], 'utf8', function (err, data) {
+		
+		var output = createCompiler().compile(data, {
+			tree : program.printtree,
+			compress : program.compress
+		});
 
-			var errorReporter = createErrorReporter(data),
-					lexer = createLexer(),
-					parser = createParser(lexer, errorReporter),
-					generator = createGenerator(parser, errorReporter);
-
-			try {
-				var ast = parser.parse(data);
-				console.log(generator.generate({
-					ast : ast,
-					tree : program.printtree
-				}));
-				} catch (e) {
-					if (['ParseError', 'SemanticError'].indexOf(e.type) === -1) throw e;
-					console.log(e.message);
-				}
+		console.log(output);
 
 	});
+
 }
