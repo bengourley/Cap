@@ -6,6 +6,7 @@
 
 var program = require('commander'),
 	fs = require('fs'),
+	createLexer = require('../lib/lexer'),
 	createParser = require('../lib/parser'),
 	createGenerator = require('../lib/generator'),
 	createErrorReporter = require('../lib/errorReporter');
@@ -25,7 +26,8 @@ if (!program.args[0]) {
 	fs.readFile(program.args[0], 'utf8', function (err, data) {
 
 			var errorReporter = createErrorReporter(data),
-					parser = createParser(errorReporter),
+					lexer = createLexer(),
+					parser = createParser(lexer, errorReporter),
 					generator = createGenerator(parser, errorReporter);
 
 			try {

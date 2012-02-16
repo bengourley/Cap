@@ -8,6 +8,7 @@
  */
 
 var createParser = require('../lib/parser'),
+    createLexer = require('../lib/lexer')
     assert = require('assert');
 
 /*
@@ -17,21 +18,21 @@ var createParser = require('../lib/parser'),
 describe('parser', function () {
   
   it('should parse an empty program', function () {
-    var program = createParser().parse('');
+    var program = createParser(createLexer()).parse('');
     assert.equal(program.type, 'program');
     assert.equal(program.childNodes[0].type, 'statementList');
     assert.equal(program.childNodes[0].childNodes.length, 0);
   });
 
   it('should parse numbers', function () {
-    var program = createParser().parse('10');
+    var program = createParser(createLexer()).parse('10');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'leaf');
     assert.equal(program.childNodes[0].childNodes[0].value, '10');
   });
 
   it('should parse strings', function () {
-    var program = createParser().parse('\'stringy\'');
+    var program = createParser(createLexer()).parse('\'stringy\'');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'leaf');
     assert.equal(program.childNodes[0].childNodes[0].value, '\'stringy\'');
@@ -39,12 +40,12 @@ describe('parser', function () {
 
   it('should parse boolean values', function () {
     
-    var program = createParser().parse('true');
+    var program = createParser(createLexer()).parse('true');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'leaf');
     assert.equal(program.childNodes[0].childNodes[0].value, 'true');
 
-    program = createParser().parse('false');
+    program = createParser(createLexer()).parse('false');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'leaf');
     assert.equal(program.childNodes[0].childNodes[0].value, 'false');
@@ -53,14 +54,14 @@ describe('parser', function () {
 
   it('should parse references and identifiers', function () {
 
-    var program = createParser().parse('a');
+    var program = createParser(createLexer()).parse('a');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'reference');
     assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'identifier');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[0].value, 'a');
 
-    program = createParser().parse('a.b');
+    program = createParser(createLexer()).parse('a.b');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'reference');
     assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
@@ -69,7 +70,7 @@ describe('parser', function () {
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'identifier');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].value, 'b');
 
-    program = createParser().parse('(((a.b)))');
+    program = createParser(createLexer()).parse('(((a.b)))');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'reference');
     assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
@@ -78,7 +79,7 @@ describe('parser', function () {
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'identifier');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].value, 'b');
 
-    program = createParser().parse('(a b).c');
+    program = createParser(createLexer()).parse('(a b).c');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'reference');
     assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
@@ -87,14 +88,14 @@ describe('parser', function () {
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].value, 'c');
 
     assert.throws(function () {
-      program = createParser().parse('a.');
+      program = createParser(createLexer()).parse('a.');
     });
 
   });
 
   it('should parse algebraic expressions', function () {
     
-    var program = createParser().parse('a + b');
+    var program = createParser(createLexer()).parse('a + b');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'operator');
     assert.equal(program.childNodes[0].childNodes[0].meta.op, '+');
@@ -102,7 +103,7 @@ describe('parser', function () {
     assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'reference');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'reference');
 
-    program = createParser().parse('a - b');
+    program = createParser(createLexer()).parse('a - b');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'operator');
     assert.equal(program.childNodes[0].childNodes[0].meta.op, '-');
@@ -110,7 +111,7 @@ describe('parser', function () {
     assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'reference');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'reference');
 
-    program = createParser().parse('a * b');
+    program = createParser(createLexer()).parse('a * b');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'operator');
     assert.equal(program.childNodes[0].childNodes[0].meta.op, '*');
@@ -118,7 +119,7 @@ describe('parser', function () {
     assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'reference');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'reference');
 
-    program = createParser().parse('a / b');
+    program = createParser(createLexer()).parse('a / b');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'operator');
     assert.equal(program.childNodes[0].childNodes[0].meta.op, '/');
@@ -130,7 +131,7 @@ describe('parser', function () {
 
   it('should parse boolean expressions', function () {
 
-    var program = createParser().parse('a & b');
+    var program = createParser(createLexer()).parse('a & b');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'operator');
     assert.equal(program.childNodes[0].childNodes[0].meta.op, '&');
@@ -138,7 +139,7 @@ describe('parser', function () {
     assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'reference');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'reference');
 
-    program = createParser().parse('a | b');
+    program = createParser(createLexer()).parse('a | b');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'operator');
     assert.equal(program.childNodes[0].childNodes[0].meta.op, '|');
@@ -146,7 +147,7 @@ describe('parser', function () {
     assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'reference');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'reference');
 
-    program = createParser().parse('a == b');
+    program = createParser(createLexer()).parse('a == b');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'operator');
     assert.equal(program.childNodes[0].childNodes[0].meta.op, '===');
@@ -158,7 +159,7 @@ describe('parser', function () {
 
   it('should parse concatenations', function () {
 
-    var program = createParser().parse('a : b');
+    var program = createParser(createLexer()).parse('a : b');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'concatenation');
     assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
@@ -169,14 +170,14 @@ describe('parser', function () {
 
   it('should parse a function call', function () {
     
-    var program = createParser().parse('a b');
+    var program = createParser(createLexer()).parse('a b');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'call');
     assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
     assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'reference');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'reference');
 
-    program = createParser().parse('a ()');
+    program = createParser(createLexer()).parse('a ()');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'call');
     assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
@@ -184,21 +185,21 @@ describe('parser', function () {
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'leaf');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].value, '');
 
-    program = createParser().parse('a b c');
+    program = createParser(createLexer()).parse('a b c');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'call');
     assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
     assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'call');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'reference');
 
-    program = createParser().parse('(a b) c');
+    program = createParser(createLexer()).parse('(a b) c');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'call');
     assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
     assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'call');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'reference');
 
-    program = createParser().parse('a (b c)');
+    program = createParser(createLexer()).parse('a (b c)');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'call');
     assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
@@ -209,32 +210,32 @@ describe('parser', function () {
 
   it('should parse assignments', function () {
 
-    var program = createParser().parse('a = b');
+    var program = createParser(createLexer()).parse('a = b');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'assignment');
     assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
     assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'reference');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'reference');
 
-    program = createParser().parse('a = b c');
+    program = createParser(createLexer()).parse('a = b c');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'assignment');
     assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
     assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'reference');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'call');
 
-    program = createParser().parse('a = []\n  foo\n  bar\n10');
+    program = createParser(createLexer()).parse('a = []\n  foo\n  bar\n10');
     assert.equal(program.childNodes[0].childNodes.length, 2);
 
   });
 
   it('should parse vector literals', function () {
 
-    var program = createParser().parse('[]');
+    var program = createParser(createLexer()).parse('[]');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'vectorLiteral');
 
-    program = createParser().parse('[]\n  1\n  2\n  3');
+    program = createParser(createLexer()).parse('[]\n  1\n  2\n  3');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'vectorLiteral');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'expressionList');
@@ -246,11 +247,11 @@ describe('parser', function () {
 
   it('should parse object literals', function () {
 
-    var program = createParser().parse('{}');
+    var program = createParser(createLexer()).parse('{}');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'objectLiteral');
 
-    program = createParser().parse('{}\n  a = 1\n  a = 2\n  a = 3');
+    program = createParser(createLexer()).parse('{}\n  a = 1\n  a = 2\n  a = 3');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'objectLiteral');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'assignmentList');
@@ -261,17 +262,17 @@ describe('parser', function () {
 
   it('should parse function literals', function () {
 
-    var program = createParser().parse('||');
+    var program = createParser(createLexer()).parse('||');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'functionLiteral');
 
-    program = createParser().parse('||\n  1 * 1');
+    program = createParser(createLexer()).parse('||\n  1 * 1');
 
   });
 
   it('should not collect expressions after literals', function () {
       
-      var program = createParser().parse('|x|\n  x + 10\n10+10');
+      var program = createParser(createLexer()).parse('|x|\n  x + 10\n10+10');
       assert.equal(program.childNodes[0].childNodes.length, 2);
       assert.equal(program.childNodes[0].childNodes[0].type, 'functionLiteral');
       assert.equal(program.childNodes[0].childNodes[1].type, 'operator');
