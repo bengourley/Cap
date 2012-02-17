@@ -49,29 +49,40 @@ if (!program.args[0]) {
 			if (err.code === 'ENOENT') {
 				console.log('No file at `' + program.args[0] + '`');
 				return;
+			} else {
+				throw err;
 			}
-		} else {
-			throw err;
 		}
+
+		try {
 		
-		var output = createCompiler().compile(data, {
-			tree : program.printtree,
-			compress : program.compress
-		});
-
-		if (program.print) {
-			
-			console.log(output);
-
-		} else {
-			fs.writeFile(program.args[0] + '.js', output, function (err) {
-				
-				if (err) throw err;
-
-				console.log(program.args[0] + ' -> ' + program.args[0] + '.js');
-
+			var output = createCompiler().compile(data, {
+				tree : program.printtree,
+				compress : program.compress
 			});
-		}
+
+			if (program.print) {
+				
+				console.log(output);
+
+			} else {
+				fs.writeFile(program.args[0] + '.js', output, function (err) {
+					
+					if (err) throw err;
+
+					console.log(program.args[0] + ' -> ' + program.args[0] + '.js');
+
+				});
+			}
+
+		} catch (e) {
+		
+			if (['ParseError', 'SemanticError'].indexOf(e.type) !== -1) {
+        console.log(e.message);
+      } else {
+        throw e;
+      }
+    }
 
 	});
 
