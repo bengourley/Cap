@@ -29,12 +29,18 @@ task('docs', function () {
   var fs = require('fs');
 
   var createDocs = function (err, files) {
+    
+    var jsfiles = [];
     files.forEach(function (file) {
-      if (!/.js$/.test(file)) return;
-      var docs = spawn('docco', [__dirname + '/lib/' + file]);
-      docs.stdout.on('data', print);
-      docs.stderr.on('data', print);
+      if ((/.js$/).test(file)) {
+        jsfiles.push(__dirname + '/lib/' + file);
+      }
     });
+
+    var docs = spawn('docco', jsfiles);
+    docs.stdout.on('data', print);
+    docs.stderr.on('data', print);
+
   };
 
   var rm = spawn('rm', ['-rf', __dirname + '/docs']);
