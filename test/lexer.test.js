@@ -89,8 +89,6 @@ describe('lexer', function () {
 
 	});
 
-	it('should identify a string with escaped single quotes');
-
 	it('should identify a number', function () {
 
 		var lexer = newLexerWithInput('12345 0.99\n');
@@ -101,6 +99,19 @@ describe('lexer', function () {
 	});
 
 	it('should identify single characters (including errors)');
+
+	it('should identify a string with escaped single quotes');
+
+	it('should discard comments');
+
+	it('should consolidate newlines at the start of the file', function () {
+		
+		var lexer = newLexerWithInput('\n\n\nx = 10\n');
+
+		assert.equal(lexer.lex().type, 'vwhitespace');
+		assert.notEqual(lexer.lex().type, 'vwhitespace');
+
+	});
 
 });
 

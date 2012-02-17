@@ -166,6 +166,13 @@ describe('parser', function () {
     assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'reference');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'reference');
 
+    program = createParser(createLexer()).parse('a : b : c');
+    assert.equal(program.childNodes[0].childNodes.length, 1);
+    assert.equal(program.childNodes[0].childNodes[0].type, 'concatenation');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'reference');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'concatenation');
+
   });
 
   it('should parse a function call', function () {
@@ -276,6 +283,12 @@ describe('parser', function () {
       assert.equal(program.childNodes[0].childNodes.length, 2);
       assert.equal(program.childNodes[0].childNodes[0].type, 'functionLiteral');
       assert.equal(program.childNodes[0].childNodes[1].type, 'operator');
+
+  });
+
+  it('should be ok with leading newlines', function () {
+      
+      var program = createParser(createLexer()).parse('\n\nx = 10');
 
   });
 
