@@ -61,7 +61,7 @@ if (!program.args[0]) {
 				compress : program.compress
 			});
 
-			if (program.print) {
+			if (program.print || program.printtree) {
 				
 				console.log(output);
 
