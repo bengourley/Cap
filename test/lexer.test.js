@@ -100,7 +100,14 @@ describe('lexer', function () {
 
 	it('should identify single characters (including errors)');
 
-	it('should identify a string with escaped single quotes');
+	it('should identify a string with escaped single quotes', function () {
+
+		var lexer = newLexerWithInput('\'That\\\'s nice\'');
+		assert.equal(lexer.lex().type, 'string');
+		assert.equal(lexer.lex().type, 'vwhitespace');
+		assert.equal(lexer.lex().type, 'eof');
+
+	});
 
 	it('should discard comments');
 
