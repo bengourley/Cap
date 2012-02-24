@@ -7,7 +7,7 @@
  * Module dependencies
  */
 
-var token = require('../lib/token'),
+var token = require('../').token,
     assert = require('assert');
 
 /*

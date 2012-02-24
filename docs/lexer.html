@@ -172,12 +172,16 @@ by matching against the whitelist of reserved words.</p>             </td>      
       <span class="p">});</span>
     <span class="p">}</span>
   <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <p><code>string()</code> recognises a string. e.g <code>'Hello, World!'</code></p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">string</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">res</span> <span class="o">=</span> <span class="sr">/^&#39;([^&#39;])*&#39;/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">input</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">res</span> <span class="o">=</span> <span class="sr">/^&#39;(.*)&#39;/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">input</span><span class="p">);</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">advance</span><span class="p">(</span><span class="nx">res</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">length</span><span class="p">);</span>
+      <span class="nx">res</span> <span class="o">=</span> <span class="nx">res</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+      <span class="k">while</span> <span class="p">(</span><span class="nx">res</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="nx">res</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;\\&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">res</span> <span class="o">+=</span> <span class="sr">/^&#39;(.*)&#39;/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">input</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>
+      <span class="p">}</span>
+      <span class="nx">advance</span><span class="p">(</span><span class="nx">res</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
       <span class="k">return</span> <span class="nx">token</span><span class="p">({</span>
         <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-        <span class="nx">value</span> <span class="o">:</span> <span class="nx">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="nx">value</span> <span class="o">:</span> <span class="nx">res</span>
       <span class="p">});</span>
     <span class="p">}</span>
   <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-21">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-21">&#182;</a>               </div>               <p><code>single()</code> recognises any allowed single
