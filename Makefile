@@ -8,10 +8,13 @@ test-cov: lib-cov
 	@COVERAGE=1 $(MAKE) test REPORTER=html-cov > coverage.html
 
 lib-cov:
+	@rm -rf lib-cov
 	@jscoverage lib lib-cov
 
 docclean:
-	rm -rf docs/
+	@rm -rf docs/
 
-docs:
+docs: docclean
 	docco lib/*.js
+
+.PHONY: test test-cov docs lib-cov
