@@ -289,6 +289,65 @@ describe('parser', function () {
   it('should be ok with leading newlines', function () {
       
       var program = createParser(createLexer()).parse('\n\nx = 10');
+      assert.equal(program.childNodes[0].childNodes.length, 1);
+      assert.equal(program.childNodes[0].childNodes[0].type, 'assignment');
+
+  });
+
+  it('should parse a where clause', function () {
+
+    var program = createParser(createLexer()).parse('foo bar where\n  bar = 10');
+
+    assert.equal(program.childNodes[0].childNodes.length, 1);
+    assert.equal(program.childNodes[0].childNodes[0].type, 'where');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'assignmentList');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'call');
+
+  });
+
+  it('should parse a conditional', function () {
+
+    var program = createParser(createLexer()).parse('if foo\n  foo bar\nelse\n  baz bar');
+
+    assert.equal(program.childNodes[0].childNodes.length, 1);
+    assert.equal(program.childNodes[0].childNodes[0].type, 'conditional');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'ifFragment');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'elseFragment');
+
+    program = createParser(createLexer()).parse('if foo\n  foo bar\nelse if bar\n  baz');
+
+    assert.equal(program.childNodes[0].childNodes.length, 1);
+    assert.equal(program.childNodes[0].childNodes[0].type, 'conditional');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'ifFragment');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'ifFragment');
+
+    program = createParser(createLexer()).parse('if foo\n  foo bar\nelse if bar\n  baz\nelse\n  foo');
+
+    assert.equal(program.childNodes[0].childNodes.length, 1);
+    assert.equal(program.childNodes[0].childNodes[0].type, 'conditional');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 3);
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'ifFragment');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'ifFragment');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[2].type, 'elseFragment');
+
+  });
+
+  it('should parse a shorthand conditional', function () {
+
+    var program = createParser(createLexer()).parse('foo ?\n  foo bar\n  baz bar');
+
+    assert.equal(program.childNodes[0].childNodes.length, 1);
+    assert.equal(program.childNodes[0].childNodes[0].type, 'conditional');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'ifFragment');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'elseFragment');
+
+    program = createParser(createLexer()).parse('foo ?\n  foo bar');
+
+    assert.equal(program.childNodes[0].childNodes.length, 1);
+    assert.equal(program.childNodes[0].childNodes[0].type, 'conditional');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 1);
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'ifFragment');
 
   });
 

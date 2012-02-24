@@ -98,11 +98,14 @@ describe('lexer', function () {
 
 	});
 
-	it('should identify single characters (including errors)');
-
 	it('should identify a string with escaped single quotes', function () {
 
 		var lexer = newLexerWithInput('\'That\\\'s nice\'');
+		assert.equal(lexer.lex().type, 'string');
+		assert.equal(lexer.lex().type, 'vwhitespace');
+		assert.equal(lexer.lex().type, 'eof');
+
+		lexer = newLexerWithInput('\'That\\\'s n\\\'ice\'');
 		assert.equal(lexer.lex().type, 'string');
 		assert.equal(lexer.lex().type, 'vwhitespace');
 		assert.equal(lexer.lex().type, 'eof');
@@ -117,6 +120,18 @@ describe('lexer', function () {
 
 		assert.equal(lexer.lex().type, 'vwhitespace');
 		assert.notEqual(lexer.lex().type, 'vwhitespace');
+
+	});
+
+	it('should error on inconsistent indentation', function () {
+
+		var lexer = newLexerWithInput('hello\n  hi\n	hello');
+
+		for (var i = 0; i < 5; i++) {
+			lexer.lex();
+		}
+
+		assert.equal(lexer.lex().type, 'error');
 
 	});
 
