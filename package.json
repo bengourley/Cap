@@ -10,5 +10,7 @@
   "devDependencies" : {
     "mocha" : ">0"
   },
-  "bin": "./bin/capc"
+  "bin": {
+    "capc" : "./bin/capc"
+  }
 }
