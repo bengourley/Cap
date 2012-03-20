@@ -4,9 +4,11 @@
   "private" : true,
   "dependencies" : {
   		"commander" : ">0",
-      "uglify-js" : ">0"
+      "uglify-js" : ">0",
+      "js-beautify-node" : "1.0.0"
   },
   "devDependencies" : {
     "mocha" : ">0"
-  }
+  },
+  "bin": "./bin/capc"
 }
