@@ -16,7 +16,7 @@ var createParser = require('../').parser,
  */
 
 describe('parser', function () {
-  
+
   it('should parse an empty program', function () {
     var program = createParser(createLexer()).parse('');
     assert.equal(program.type, 'program');
@@ -39,7 +39,7 @@ describe('parser', function () {
   });
 
   it('should parse boolean values', function () {
-    
+
     var program = createParser(createLexer()).parse('true');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'leaf');
@@ -72,18 +72,17 @@ describe('parser', function () {
 
     program = createParser(createLexer()).parse('(((a.b)))');
     assert.equal(program.childNodes[0].childNodes.length, 1);
-    assert.equal(program.childNodes[0].childNodes[0].type, 'reference');
-    assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
-    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'identifier');
-    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].value, 'a');
-    assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'identifier');
-    assert.equal(program.childNodes[0].childNodes[0].childNodes[1].value, 'b');
+    assert.equal(program.childNodes[0].childNodes[0].type, 'tuple');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 1);
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].type, 'reference');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].value, 'a');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[1].value, 'b');
 
     program = createParser(createLexer()).parse('(a b).c');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'reference');
     assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
-    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'call');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'tuple');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'identifier');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].value, 'c');
 
@@ -94,7 +93,7 @@ describe('parser', function () {
   });
 
   it('should parse algebraic expressions', function () {
-    
+
     var program = createParser(createLexer()).parse('a + b');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'operator');
@@ -176,7 +175,7 @@ describe('parser', function () {
   });
 
   it('should parse a function call', function () {
-    
+
     var program = createParser(createLexer()).parse('a b');
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'call');
@@ -189,8 +188,8 @@ describe('parser', function () {
     assert.equal(program.childNodes[0].childNodes[0].type, 'call');
     assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
     assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'reference');
-    assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'leaf');
-    assert.equal(program.childNodes[0].childNodes[0].childNodes[1].value, '');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'tuple');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[1].childNodes[0].value, '');
 
     program = createParser(createLexer()).parse('a b c');
     assert.equal(program.childNodes[0].childNodes.length, 1);
@@ -203,7 +202,7 @@ describe('parser', function () {
     assert.equal(program.childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].type, 'call');
     assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
-    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'call');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'tuple');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'reference');
 
     program = createParser(createLexer()).parse('a (b c)');
@@ -211,7 +210,7 @@ describe('parser', function () {
     assert.equal(program.childNodes[0].childNodes[0].type, 'call');
     assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
     assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'reference');
-    assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'call');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'tuple');
 
   });
 
@@ -278,7 +277,7 @@ describe('parser', function () {
   });
 
   it('should not collect expressions after literals', function () {
-      
+
       var program = createParser(createLexer()).parse('|x|\n  x + 10\n10+10');
       assert.equal(program.childNodes[0].childNodes.length, 2);
       assert.equal(program.childNodes[0].childNodes[0].type, 'functionLiteral');
@@ -287,7 +286,7 @@ describe('parser', function () {
   });
 
   it('should be ok with leading newlines', function () {
-      
+
       var program = createParser(createLexer()).parse('\n\nx = 10');
       assert.equal(program.childNodes[0].childNodes.length, 1);
       assert.equal(program.childNodes[0].childNodes[0].type, 'assignment');
@@ -349,6 +348,15 @@ describe('parser', function () {
     assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 1);
     assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'ifFragment');
 
+  });
+
+  it('should parse a tuple', function () {
+    var program = createParser(createLexer()).parse('(1, 2)');
+
+    assert.equal(program.childNodes[0].childNodes.length, 1);
+    assert.equal(program.childNodes[0].childNodes[0].type, 'tuple');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'leaf');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'leaf');
   });
 
 });
