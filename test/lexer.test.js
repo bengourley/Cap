@@ -144,12 +144,21 @@ describe('lexer', function () {
 
   it('should handle alternating indents', function () {
 
-    var lexer = newLexerWithInput('a\n  b\n    c\n      d\n        e\n');
+    var lexer = newLexerWithInput('a\n  b\n    c\n      d\n        e\n    f\n     g\n');
+    var expected = ['identifier', 'vwhitespace', 'indent', 'vwhitespace',
+                    'identifier', 'vwhitespace', 'indent', 'vwhitespace',
+                    'identifier', 'vwhitespace', 'indent', 'vwhitespace',
+                    'identifier', 'vwhitespace', 'indent', 'vwhitespace',
+                    'identifier', 'vwhitespace', 'dedent', 'vwhitespace',
+                    'dedent', 'vwhitespace', 'identifier', 'vwhitespace',
+                    'indent', 'vwhitespace', 'identifier', 'vwhitespace',
+                    'dedent', 'vwhitespace', 'dedent', 'vwhitespace',
+                    'dedent', 'vwhitespace'];
 
     var t = lexer.lex();
     while (t.type !== 'eof') {
       console.log(t);
-      assert(t.type !== 'error');
+      assert.equal(t.type, expected.shift());
       t = lexer.lex();
     }
 
