@@ -15,7 +15,6 @@ and creating tokens.</p>             </td>             <td class="code">        
       <span class="nx">reservedWords</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s1">&#39;if&#39;</span><span class="p">,</span>
         <span class="s1">&#39;else&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;...&#39;</span><span class="p">,</span>
         <span class="s1">&#39;for&#39;</span><span class="p">,</span>
         <span class="s1">&#39;while&#39;</span><span class="p">,</span>
         <span class="s1">&#39;to&#39;</span><span class="p">,</span>
@@ -172,13 +171,37 @@ by matching against the whitelist of reserved words.</p>             </td>      
       <span class="p">});</span>
     <span class="p">}</span>
   <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <p><code>string()</code> recognises a string. e.g <code>'Hello, World!'</code></p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">string</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">res</span> <span class="o">=</span> <span class="sr">/^&#39;(.*)&#39;/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">input</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">res</span> <span class="o">=</span> <span class="nx">res</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-      <span class="k">while</span> <span class="p">(</span><span class="nx">res</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="nx">res</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;\\&#39;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">res</span> <span class="o">+=</span> <span class="sr">/^&#39;(.*)&#39;/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">input</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>
+
+    <span class="kd">var</span> <span class="nx">pointer</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nx">end</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="nx">escaped</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">input</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">pointer</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;\&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+
+      <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="nx">end</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="nx">pointer</span><span class="o">++</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">pointer</span> <span class="o">===</span> <span class="nx">input</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="nx">token</span><span class="p">({</span>
+            <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span>
+            <span class="nx">value</span> <span class="o">:</span> <span class="s1">&#39;Unterminated string&#39;</span>
+          <span class="p">});</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">input</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">pointer</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;\\&#39;</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">escaped</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">input</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">pointer</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;\&#39;&#39;</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">escaped</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">end</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">escaped</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">escaped</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+
       <span class="p">}</span>
-      <span class="nx">advance</span><span class="p">(</span><span class="nx">res</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+
+      <span class="kd">var</span> <span class="nx">res</span> <span class="o">=</span> <span class="nx">input</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">pointer</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+      <span class="nx">advance</span><span class="p">(</span><span class="nx">pointer</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+
       <span class="k">return</span> <span class="nx">token</span><span class="p">({</span>
         <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
         <span class="nx">value</span> <span class="o">:</span> <span class="nx">res</span>
@@ -187,7 +210,7 @@ by matching against the whitelist of reserved words.</p>             </td>      
   <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-21">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-21">&#182;</a>               </div>               <p><code>single()</code> recognises any allowed single
 character. If this fails, it creates an error
 token with the offending character.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">single</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-    
+
     <span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">input</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
     <span class="nx">advance</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
 
@@ -200,8 +223,7 @@ token with the offending character.</p>             </td>             <td class=
   <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-22">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-22">&#182;</a>               </div>               <p>Expose <code>lex</code> and <code>setInput</code> methods
 publicly (to the parser).</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">lexer</span><span class="p">.</span><span class="nx">lex</span> <span class="o">=</span> <span class="nx">lex</span><span class="p">;</span>
   <span class="nx">lexer</span><span class="p">.</span><span class="nx">setInput</span> <span class="o">=</span> <span class="nx">setInput</span><span class="p">;</span>
-  <span class="nx">lexer</span><span class="p">.</span><span class="nx">lookahead</span> <span class="o">=</span> <span class="nx">lookahead</span><span class="p">;</span>
-  </pre></div>             </td>           </tr>                               <tr id="section-23">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-23">&#182;</a>               </div>               <p><code>getPosition()</code> is a public method that gets
+  <span class="nx">lexer</span><span class="p">.</span><span class="nx">lookahead</span> <span class="o">=</span> <span class="nx">lookahead</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-23">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-23">&#182;</a>               </div>               <p><code>getPosition()</code> is a public method that gets
 the current position of the lexer on its input.
 It is used to create meaningful error messages.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">lexer</span><span class="p">.</span><span class="nx">getPosition</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">position</span><span class="p">;</span>

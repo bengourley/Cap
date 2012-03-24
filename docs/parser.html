@@ -63,7 +63,7 @@ assignments (i.e. literals)</p>             </td>             <td class="code"> 
           <span class="s1">&#39;vectorLiteral&#39;</span><span class="p">,</span>
           <span class="s1">&#39;functionLiteral&#39;</span> <span class="p">]</span>
             <span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">a</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">type</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">parseError</span><span class="p">(</span><span class="s1">&#39;trailing expression after literal&#39;</span><span class="p">);</span>
+      <span class="nx">parseError</span><span class="p">(</span><span class="s1">&#39;Trailing expression after literal&#39;</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Accept trailing whitespace</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">if</span> <span class="p">(</span><span class="nx">lookahead</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;vwhitespace&#39;</span><span class="p">)</span> <span class="nx">accept</span><span class="p">(</span><span class="s1">&#39;vwhitespace&#39;</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p>Create an assignment node (if we have an expression)</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">return</span> <span class="nx">node</span><span class="p">({</span>
@@ -87,13 +87,7 @@ what to parse next</p>             </td>             <td class="code">          
     <span class="k">case</span> <span class="s1">&#39;identifier&#39;</span><span class="o">:</span>
       <span class="nx">expr</span> <span class="o">=</span> <span class="nx">reference</span><span class="p">();</span> <span class="k">break</span><span class="p">;</span>
     <span class="k">case</span> <span class="s1">&#39;(&#39;</span><span class="o">:</span>
-      <span class="nx">next</span><span class="p">();</span>
-      <span class="nx">expr</span> <span class="o">=</span> <span class="nx">expression</span><span class="p">({})</span> <span class="o">||</span> <span class="nx">node</span><span class="p">({});</span>
-      <span class="nx">accept</span><span class="p">(</span><span class="s1">&#39;)&#39;</span><span class="p">);</span>
-      <span class="k">if</span> <span class="p">(</span><span class="nx">lookahead</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">next</span><span class="p">();</span>
-        <span class="nx">expr</span> <span class="o">=</span> <span class="nx">reference</span><span class="p">(</span><span class="nx">expr</span><span class="p">);</span>
-      <span class="p">}</span>
+      <span class="nx">expr</span> <span class="o">=</span> <span class="nx">tuple</span><span class="p">();</span>
       <span class="k">break</span><span class="p">;</span>
     <span class="k">default</span><span class="o">:</span>
       <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">opts</span><span class="p">.</span><span class="nx">singleLine</span><span class="p">)</span> <span class="nx">expr</span> <span class="o">=</span> <span class="nx">literal</span><span class="p">();</span>
@@ -134,7 +128,7 @@ or a function call.</p>             </td>             <td class="code">         
           <span class="nx">sourceLocation</span> <span class="o">:</span> <span class="nx">lexer</span><span class="p">.</span><span class="nx">getPosition</span><span class="p">()</span>
         <span class="p">});</span>
       <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">assign</span><span class="p">(</span><span class="nx">expr</span><span class="p">,</span> <span class="p">{});</span> 
+        <span class="k">return</span> <span class="nx">assign</span><span class="p">(</span><span class="nx">expr</span><span class="p">,</span> <span class="p">{});</span>
       <span class="p">}</span>
     <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">lookahead</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;:&#39;</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">next</span><span class="p">();</span>
@@ -205,7 +199,12 @@ just return the single expression</p>             </td>             <td class="c
         <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;params&#39;</span><span class="p">,</span>
         <span class="nx">childNodes</span> <span class="o">:</span> <span class="p">(</span><span class="kd">function</span> <span class="nx">collect</span><span class="p">(</span><span class="nx">nodes</span><span class="p">)</span> <span class="p">{</span>
           <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">id</span><span class="p">();</span>
-          <span class="k">if</span> <span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="nx">nodes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">nodes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+          <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">lookahead</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nx">type</span> <span class="o">!==</span> <span class="s1">&#39;|&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">parseError</span><span class="p">(</span><span class="s1">&#39;Unexpected token `&#39;</span> <span class="o">+</span> <span class="nx">lookahead</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nx">type</span> <span class="o">+</span>
+              <span class="s1">&#39;` in param definition&#39;</span><span class="p">);</span>
+          <span class="p">}</span>
           <span class="k">return</span> <span class="nx">lookahead</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nx">type</span> <span class="o">!==</span> <span class="s1">&#39;|&#39;</span> <span class="o">?</span>
             <span class="nx">collect</span><span class="p">(</span><span class="nx">nodes</span><span class="p">)</span> <span class="o">:</span>
             <span class="nx">nodes</span><span class="p">;</span>
@@ -262,7 +261,7 @@ just return the single expression</p>             </td>             <td class="c
   <span class="p">};</span>
 
   <span class="kd">var</span> <span class="nx">assignList</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-    
+
     <span class="k">return</span> <span class="nx">node</span><span class="p">({</span>
       <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;assignmentList&#39;</span><span class="p">,</span>
       <span class="nx">childNodes</span> <span class="o">:</span> <span class="p">(</span><span class="kd">function</span> <span class="nx">collect</span><span class="p">(</span><span class="nx">nodes</span><span class="p">)</span> <span class="p">{</span>
@@ -271,7 +270,7 @@ just return the single expression</p>             </td>             <td class="c
         <span class="k">if</span> <span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
           <span class="nx">accept</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">);</span>
           <span class="nx">a</span> <span class="o">=</span> <span class="nx">assign</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
-          <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">a</span><span class="p">)</span> <span class="k">throw</span> <span class="nx">parseError</span><span class="p">(</span><span class="s1">&#39;failed to match an assignment&#39;</span><span class="p">);</span>
+          <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">a</span><span class="p">)</span> <span class="k">throw</span> <span class="nx">parseError</span><span class="p">(</span><span class="s1">&#39;Failed to match an assignment&#39;</span><span class="p">);</span>
           <span class="nx">nodes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">a</span><span class="p">);</span>
           <span class="k">if</span> <span class="p">(</span><span class="nx">lookahead</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nx">type</span> <span class="o">!==</span> <span class="s1">&#39;dedent&#39;</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="nx">collect</span><span class="p">(</span><span class="nx">nodes</span><span class="p">);</span>
@@ -288,7 +287,7 @@ just return the single expression</p>             </td>             <td class="c
   <span class="p">};</span>
 
   <span class="kd">var</span> <span class="nx">expressionList</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-    
+
     <span class="k">return</span> <span class="nx">node</span><span class="p">({</span>
       <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;expressionList&#39;</span><span class="p">,</span>
       <span class="nx">childNodes</span> <span class="o">:</span> <span class="p">(</span><span class="kd">function</span> <span class="nx">collect</span><span class="p">(</span><span class="nx">nodes</span><span class="p">)</span> <span class="p">{</span>
@@ -309,8 +308,7 @@ just return the single expression</p>             </td>             <td class="c
   <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-24">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-24">&#182;</a>               </div>               <p>Parses a conditional</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">conditional</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
 
     <span class="kd">var</span> <span class="nx">iff</span><span class="p">,</span> <span class="nx">elseIfs</span><span class="p">,</span> <span class="nx">elsee</span><span class="p">,</span>
-      <span class="nx">recogniseIf</span><span class="p">,</span> <span class="nx">recogniseElse</span><span class="p">;</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-25">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-25">&#182;</a>               </div>               <p>Helper function to recognise
+      <span class="nx">recogniseIf</span><span class="p">,</span> <span class="nx">recogniseElse</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-25">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-25">&#182;</a>               </div>               <p>Helper function to recognise
 <code>if</code>s (and <code>else if</code>s)</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">recogniseIf</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
       <span class="kd">var</span> <span class="nx">condition</span><span class="p">,</span> <span class="nx">body</span><span class="p">;</span>
       <span class="nx">accept</span><span class="p">(</span><span class="s1">&#39;if&#39;</span><span class="p">);</span>
@@ -458,6 +456,30 @@ build the node now</p>             </td>             <td class="code">          
       <span class="nx">childNodes</span> <span class="o">:</span> <span class="p">[</span><span class="nx">pre</span><span class="p">,</span> <span class="nx">call</span><span class="p">],</span>
       <span class="nx">sourceLocation</span> <span class="o">:</span> <span class="nx">lexer</span><span class="p">.</span><span class="nx">getPosition</span><span class="p">()</span>
     <span class="p">});</span>
+  <span class="p">};</span>
+
+  <span class="kd">var</span> <span class="nx">tuple</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">next</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">expr</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="nx">expr</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">expression</span><span class="p">({})</span> <span class="o">||</span> <span class="nx">node</span><span class="p">({}));</span>
+    <span class="k">while</span> <span class="p">(</span><span class="nx">lookahead</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">accept</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">);</span>
+      <span class="nx">expr</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">expression</span><span class="p">({}));</span>
+    <span class="p">}</span>
+    <span class="nx">accept</span><span class="p">(</span><span class="s1">&#39;)&#39;</span><span class="p">);</span>
+
+    <span class="nx">expr</span> <span class="o">=</span> <span class="nx">node</span><span class="p">({</span>
+      <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;tuple&#39;</span><span class="p">,</span>
+      <span class="nx">childNodes</span> <span class="o">:</span> <span class="nx">expr</span><span class="p">,</span>
+      <span class="nx">sourceLocation</span> <span class="o">:</span> <span class="nx">lexer</span><span class="p">.</span><span class="nx">getPosition</span><span class="p">()</span>
+    <span class="p">});</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">lookahead</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">expr</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="nx">parseError</span><span class="p">(</span><span class="s1">&#39;Tuple is not accessible using `.`&#39;</span><span class="p">);</span>
+      <span class="nx">next</span><span class="p">();</span>
+      <span class="nx">expr</span> <span class="o">=</span> <span class="nx">reference</span><span class="p">(</span><span class="nx">expr</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">expr</span><span class="p">;</span>
   <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-36">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-36">&#182;</a>               </div>               <p>Parses a concatenation expression</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">concatenation</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">first</span><span class="p">)</span> <span class="p">{</span>
 
     <span class="kd">var</span> <span class="nx">concats</span> <span class="o">=</span> <span class="p">[</span><span class="nx">first</span><span class="p">],</span> <span class="nx">expr</span><span class="p">;</span>
@@ -544,9 +566,11 @@ not found, creates an error.</p>             </td>             <td class="code">
 an error. Uses an error reporter
 to provide meaningful error</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">parseError</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="kd">var</span> <span class="nx">ParseError</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span>
-      <span class="nx">errorReporter</span><span class="p">.</span><span class="nx">getReport</span><span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">lexer</span><span class="p">.</span><span class="nx">getPosition</span><span class="p">())</span>
-    <span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">report</span> <span class="o">=</span> <span class="nx">errorReporter</span>
+      <span class="o">?</span> <span class="nx">errorReporter</span><span class="p">.</span><span class="nx">getReport</span><span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">lexer</span><span class="p">.</span><span class="nx">getPosition</span><span class="p">())</span>
+      <span class="o">:</span> <span class="nx">msg</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">ParseError</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">report</span><span class="p">);</span>
 
     <span class="nx">ParseError</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s1">&#39;ParseError&#39;</span><span class="p">;</span>
 
@@ -555,8 +579,11 @@ to provide meaningful error</p>             </td>             <td class="code"> 
 <code>lex</code> function.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">next</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">lexer</span><span class="p">.</span><span class="nx">lex</span><span class="p">();</span></pre></div>             </td>           </tr>                               <tr id="section-45">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-45">&#182;</a>               </div>               <p>console.log(n);</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">return</span> <span class="nx">n</span><span class="p">;</span>
   <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-46">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-46">&#182;</a>               </div>               <p>Shortcut to the lexer's
-<code>lookahead</code> function</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">lookahead</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+<code>lookahead</code> function, but
+intercept error tokens and
+report them</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">lookahead</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">lh</span> <span class="o">=</span> <span class="nx">lexer</span><span class="p">.</span><span class="nx">lookahead</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">lh</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;error&#39;</span><span class="p">)</span> <span class="nx">parseError</span><span class="p">(</span><span class="nx">lh</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
     <span class="k">return</span> <span class="nx">lh</span><span class="p">;</span>
   <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-47">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-47">&#182;</a>               </div>               <p>Shortcut to the lexer's
 <code>location</code> function</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">parser</span><span class="p">.</span><span class="nx">position</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
