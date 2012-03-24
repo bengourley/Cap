@@ -274,6 +274,17 @@ describe('parser', function () {
 
     program = createParser(createLexer()).parse('||\n  1 * 1');
 
+    program = createParser(createLexer()).parse('|x|\n  x * x');
+
+    assert.equal(program.childNodes[0].childNodes.length, 1);
+    assert.equal(program.childNodes[0].childNodes[0].type, 'functionLiteral');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'params');
+    assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'statementList');
+
+    assert.throws(function () {
+        program = createParser(createLexer()).parse('|x, y|\n  y * x');
+    });
+
   });
 
   it('should not collect expressions after literals', function () {
@@ -357,6 +368,7 @@ describe('parser', function () {
     assert.equal(program.childNodes[0].childNodes[0].type, 'tuple');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'leaf');
     assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'leaf');
+
   });
 
 });

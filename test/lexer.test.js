@@ -47,7 +47,7 @@ describe('lexer', function () {
   });
 
   it('should handle simple indentation', function () {
-    
+
     var lexer = newLexerWithInput('x\n  x\nx\n');
 
     assert.equal(lexer.lex().type, 'identifier');
@@ -61,11 +61,11 @@ describe('lexer', function () {
     assert.equal(lexer.lex().type, 'identifier');
     assert.equal(lexer.lex().type, 'vwhitespace');
     assert.equal(lexer.lex().type, 'eof');
-    
+
   });
 
   it('should consolidate consecutive newlines', function () {
-    
+
     var lexer = newLexerWithInput('x\n\nx\n');
 
     assert.equal(lexer.lex().type, 'identifier');
@@ -122,7 +122,7 @@ describe('lexer', function () {
   it('should discard comments');
 
   it('should consolidate newlines at the start of the file', function () {
-    
+
     var lexer = newLexerWithInput('\n\n\nx = 10\n');
 
     assert.equal(lexer.lex().type, 'vwhitespace');
@@ -139,6 +139,20 @@ describe('lexer', function () {
     }
 
     assert.equal(lexer.lex().type, 'error');
+
+  });
+
+  it('should handle alternating indents', function () {
+
+    var lexer = newLexerWithInput('a\n  b\n    c\n      d\n        e\n');
+
+    var t = lexer.lex();
+    while (t.type !== 'eof') {
+      console.log(t);
+      assert(t.type !== 'error');
+      t = lexer.lex();
+    }
+
 
   });
 

@@ -99,6 +99,8 @@ indent and produces a token if required,
 which may turn out to be an indent, a
 newline or an error (inconsistent indentation).</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">determineIndent</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">indentString</span><span class="p">)</span> <span class="p">{</span>
 
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">indentString</span><span class="p">);</span>
+
     <span class="k">if</span> <span class="p">(</span><span class="nx">indentString</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">indentStack</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">))</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">indentStack</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">indentString</span><span class="p">);</span>
       <span class="k">return</span> <span class="p">[</span>
