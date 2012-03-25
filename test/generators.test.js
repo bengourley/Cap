@@ -55,4 +55,27 @@ describe('generators', function () {
 
   });
 
+  it('should add an identifier to the scope if specified', function () {
+
+    var meta = {
+      scope : [],
+      addToScope : true,
+      ignoreScope : true
+    };
+
+    assert.equal(meta.scope.length, 0);
+
+    var output = generators['identifier']({
+      type : 'identifier',
+      value : 'foo'
+    }, meta);
+
+    assert.equal(meta.scope[0], 'foo');
+
+  });
+
+  it('should check scope correctly on a reference');
+
+  it('should append an empty string to a concatenation');
+
 });
