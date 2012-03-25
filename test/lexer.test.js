@@ -119,7 +119,13 @@ describe('lexer', function () {
     assert.equal(lexer.lex().type, 'string');
   });
 
-  it('should discard comments');
+  it('should discard comments', function () {
+    var lexer = newLexerWithInput('# This is a comment\njim');
+    assert.equal(lexer.lex().type, 'identifier');
+
+    lexer = newLexerWithInput('# This is a comment\n# Another\njim');
+    assert.equal(lexer.lex().type, 'identifier');
+  });
 
   it('should consolidate newlines at the start of the file', function () {
 
@@ -142,6 +148,13 @@ describe('lexer', function () {
 
   });
 
+  it('should error on an illegal character', function () {
+
+    var lexer = newLexerWithInput('±');
+    assert.equal(lexer.lex().value, '`±` (illegal token)');
+
+  });
+
   it('should handle alternating indents', function () {
 
     var lexer = newLexerWithInput('a\n  b\n    c\n      d\n        e\n    f\n     g\n');
@@ -157,7 +170,6 @@ describe('lexer', function () {
 
     var t = lexer.lex();
     while (t.type !== 'eof') {
-      console.log(t);
       assert.equal(t.type, expected.shift());
       t = lexer.lex();
     }
