@@ -1,6 +1,6 @@
 /*
  * Tests for lib/Token.js
- * Run with `jake test`
+ * Run with `make test`
  */
 
 /*
@@ -15,7 +15,7 @@ var token = require('../').token,
  */
 
 describe('token', function () {
-  
+
   it('should have the type it is initialised with', function () {
     var t = token({ type : 'foo'});
     assert.equal('foo', t.type);

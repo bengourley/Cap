@@ -1,6 +1,6 @@
 /*
  * Tests for lib/lexer.js
- * Run with `jake test`
+ * Run with `make test`
  */
 
 /*
@@ -117,6 +117,11 @@ describe('lexer', function () {
     assert.equal(lexer.lex().type, 'string');
     assert.equal(lexer.lex().type, ',');
     assert.equal(lexer.lex().type, 'string');
+  });
+
+  it('should identify an untermined string', function () {
+    var lexer = newLexerWithInput('\'jim');
+    assert.equal(lexer.lex().value, 'Unterminated string');
   });
 
   it('should discard comments', function () {

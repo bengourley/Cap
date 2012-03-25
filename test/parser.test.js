@@ -1,6 +1,6 @@
 /*
  * Tests for lib/parser.js
- * Run with `jake test`
+ * Run with `make test`
  */
 
 /*

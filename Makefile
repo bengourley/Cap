@@ -6,6 +6,7 @@ test:
 
 test-cov: lib-cov
 	@COVERAGE=1 $(MAKE) test REPORTER=html-cov > coverage.html
+	@open coverage.html
 
 lib-cov:
 	@rm -rf lib-cov

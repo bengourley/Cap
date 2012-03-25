@@ -11,3 +11,7 @@ module.exports.parser = coverage
 module.exports.token = coverage
   ? require('./lib-cov/token')
   : require('./lib/token');
+
+module.exports.generators = coverage
+  ? require('./lib-cov/generators')
+  : require('./lib/generators');
