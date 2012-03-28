@@ -24,7 +24,11 @@ describe('generators', function () {
         childNodes : [{ type : 'leaf', value :''}]
       });
 
-      assert.equal(output, '(function () {\n}());');
+      assert.equal(output, '(function (module, exports) {\n' +
+        'var _require = require;\n' +
+        'require = function (module) { return _require(module + \'.cap.js\'); };\n' +
+        '}(typeof module !== \'undefined\' ? module : _module(\'undefined\'),\n' +
+        'typeof exports !== \'undefined\' ? exports : _exports(\'undefined\')));');
 
     });
 
