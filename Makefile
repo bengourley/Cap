@@ -16,6 +16,7 @@ docclean:
 	@rm -rf docs/
 
 docs: docclean
-	docco lib/*.js
+	@docco lib/*.js
+	@open docs/compiler.html
 
 .PHONY: test test-cov docs lib-cov
