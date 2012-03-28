@@ -373,7 +373,7 @@ describe('parser', function () {
     });
   });
 
-  describe('#conditional', function () {
+  describe('#conditional()', function () {
 
     it('should parse a conditional', function () {
 
