@@ -15,3 +15,7 @@ module.exports.token = coverage
 module.exports.generators = coverage
   ? require('./lib-cov/generators')
   : require('./lib/generators');
+
+module.exports.node = coverage
+  ? require('./lib-cov/node')
+  : require('./lib/node');

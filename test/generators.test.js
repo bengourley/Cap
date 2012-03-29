@@ -10,11 +10,24 @@
 var createGenerators = require('../').generators,
     assert = require('assert');
 
+var createLexer = require('./../lib/lexer'),
+    createParser = require('./../lib/parser'),
+    fs = require('fs');
+
+var parseSample = function (file) {
+  var parser = createParser(createLexer(), {
+      getReport : function (msg) { return msg; }
+    });
+  return parser.parse(
+    fs.readFileSync(__dirname + '/sample-programs/' + file)
+  );
+};
+
 /*
  * Tests
  */
 
-describe('generators', function () {
+describe('lib/generators', function () {
 
   var generators;
   beforeEach(function () {
@@ -39,15 +52,12 @@ describe('generators', function () {
     });
 
     it('should accurately maintain scoped variables', function () {
-      var createLexer = require('./../lib/lexer'),
-          createParser = require('./../lib/parser'),
-          fs = require('fs');
 
-      var parser = createParser(createLexer());
-      var ast = parser.parse(fs.readFileSync(__dirname + '/sample-programs/scope.cap'));
+      var ast = parseSample('scope.cap');
       var meta = {
         scope : []
       };
+
       var output = generators['statementList'](ast.childNodes[0], meta);
 
       assert(meta.scope.indexOf('foo') !== -1);
@@ -118,6 +128,41 @@ describe('generators', function () {
   describe('#concatenation()', function () {
 
     it('should prepend an empty string to a concatenation');
+
+  });
+
+  describe('#functionLiteral', function () {
+
+    var ast;
+    beforeEach(function () {
+      ast = parseSample('functions.cap');
+    });
+
+    it('should create a function which takes no arguments', function () {
+      // console.log(generators['functionLiteral'](ast.childNodes[0].childNodes[1]));
+    });
+
+    it('should create a function which takes arguments');
+    it('assign a function to a variable');
+
+  });
+
+  describe('#call', function () {
+
+    var ast;
+    beforeEach(function () {
+      ast = parseSample('call.cap');
+    });
+
+    it('should create a function which takes no arguments');
+    it('should create a function which takes arguments');
+    it('assign a function to a variable');
+
+  });
+
+  describe('#statementList()', function () {
+
+    it('should always return as the last statement');
 
   });
 

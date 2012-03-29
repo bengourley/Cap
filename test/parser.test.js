@@ -8,14 +8,14 @@
  */
 
 var createParser = require('../').parser,
-    createLexer = require('../').lexer,
+    createLexer = require('../lib/lexer'),
     assert = require('assert');
 
 /*
  * Tests
  */
 
-describe('parser', function () {
+describe('lib/parser', function () {
 
   describe('#program()', function () {
 

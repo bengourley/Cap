@@ -23,7 +23,7 @@ var newLexerWithInput = function (input) {
  * Tests
  */
 
-describe('lexer', function () {
+describe('lib/lexer', function () {
 
   describe('#newline()', function () {
 

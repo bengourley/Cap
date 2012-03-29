@@ -14,7 +14,7 @@ var token = require('../').token,
  * Tests
  */
 
-describe('token', function () {
+describe('lib/token', function () {
 
   describe('#token()', function () {
 
