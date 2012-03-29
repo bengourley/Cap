@@ -1,0 +1,12 @@
+foo = 10
+
+bar = {}
+
+bar.something = |a|
+  a
+
+fun = |x|
+  x
+
+oblit = {}
+  key = 'val'

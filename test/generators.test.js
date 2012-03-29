@@ -7,7 +7,7 @@
  * Module dependencies
  */
 
-var generators = require('../').generators(),
+var createGenerators = require('../').generators,
     assert = require('assert');
 
 /*
@@ -15,6 +15,13 @@ var generators = require('../').generators(),
  */
 
 describe('generators', function () {
+
+  var generators;
+  beforeEach(function () {
+    generators = createGenerators('test', {
+      getReport : function (msg) { return msg; }
+    });
+  });
 
   describe('#program()', function () {
 
@@ -24,11 +31,31 @@ describe('generators', function () {
         childNodes : [{ type : 'leaf', value :''}]
       });
 
-      assert.equal(output, '(function (module, exports) {\n' +
-        'var _require = require;\n' +
-        'require = function (module) { return _require(module + \'.cap.js\'); };\n' +
-        '}(typeof module !== \'undefined\' ? module : _module(\'undefined\'),\n' +
-        'typeof exports !== \'undefined\' ? exports : _exports(\'undefined\')));');
+      assert.equal(output, '(function (module, exports, require) {\n' +
+        '}(typeof module !== \'undefined\' ? module : _module(\'test\'), ' +
+        'typeof exports !== \'undefined\' ? exports : _exports(\'test\'), ' +
+        'function (module) { return require(module.indexOf(\'./\') === 0 ? module + \'.cap.js\' : module); }\n'+ '));');
+
+    });
+
+    it('should accurately maintain scoped variables', function () {
+      var createLexer = require('./../lib/lexer'),
+          createParser = require('./../lib/parser'),
+          fs = require('fs');
+
+      var parser = createParser(createLexer());
+      var ast = parser.parse(fs.readFileSync(__dirname + '/sample-programs/scope.cap'));
+      var meta = {
+        scope : []
+      };
+      var output = generators['statementList'](ast.childNodes[0], meta);
+
+      assert(meta.scope.indexOf('foo') !== -1);
+      assert(meta.scope.indexOf('bar') !== -1);
+      assert(meta.scope.indexOf('fun') !== -1);
+      assert(meta.scope.indexOf('a') === -1);
+      assert(meta.scope.indexOf('x') === -1);
+      assert(meta.scope.indexOf('key') === -1);
 
     });
 
