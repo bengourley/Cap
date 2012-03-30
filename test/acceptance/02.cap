@@ -1,0 +1,5 @@
+do = |arg|
+  arg
+
+do something where
+  something = 10

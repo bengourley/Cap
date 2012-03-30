@@ -3,3 +3,14 @@
 
 |x|
   x
+
+|x y|
+  x + y
+
+|x y z|
+  x + y + z
+
+foo = |x y z|
+  x + y + z
+
+0

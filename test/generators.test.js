@@ -139,11 +139,34 @@ describe('lib/generators', function () {
     });
 
     it('should create a function which takes no arguments', function () {
-      // console.log(generators['functionLiteral'](ast.childNodes[0].childNodes[1]));
+      var output = generators['functionLiteral'](ast.childNodes[0].childNodes[0], {
+        scope : []
+      });
+      assert.equal(output, 'function __anon1() {return 0;\n}');
     });
 
-    it('should create a function which takes arguments');
-    it('assign a function to a variable');
+    it('should create a function which takes arguments', function () {
+      var output = generators['functionLiteral'](ast.childNodes[0].childNodes[1], {
+        scope : []
+      });
+      assert.equal(output, 'function __anon1(x) {return x;\n}');
+      output = generators['functionLiteral'](ast.childNodes[0].childNodes[2], {
+        scope : []
+      });
+      assert.equal(output, 'function __anon2(x, y) {return x+y;\n}');
+      output = generators['functionLiteral'](ast.childNodes[0].childNodes[3], {
+        scope : []
+      });
+      assert.equal(output, 'function __anon3(x, y, z) {return x+y+z;\n}');
+    });
+
+    it('should name a function if it is being assigned', function () {
+      var output = generators['assignment'](ast.childNodes[0].childNodes[4], {
+        scope : [],
+        omitReturn : true
+      });
+      assert.equal(output, 'var foo=function foo(x, y, z) {return x+y+z;\n}');
+    });
 
   });
 
@@ -154,15 +177,34 @@ describe('lib/generators', function () {
       ast = parseSample('call.cap');
     });
 
-    it('should create a function which takes no arguments');
-    it('should create a function which takes arguments');
-    it('assign a function to a variable');
-
   });
 
   describe('#statementList()', function () {
 
-    it('should always return as the last statement');
+    it('should always return as the last statement', function () {
+
+      var ast = parseSample('statements01.cap');
+      var output = generators['statementList'](ast.childNodes[0], {
+        scope : ['foo', 'print', 'arg']
+      });
+      output = output.split('\n');
+      assert.notEqual(output[output.length - 2].indexOf('return'), -1);
+
+      ast = parseSample('statements02.cap');
+      output = generators['statementList'](ast.childNodes[0], {
+        scope : ['foo', 'print', 'arg']
+      });
+      output = output.split('\n');
+      assert.notEqual(output[output.length - 3].indexOf('return'), -1);
+
+      ast = parseSample('statements03.cap');
+      output = generators['statementList'](ast.childNodes[0], {
+        scope : ['foo', 'print', 'arg']
+      });
+      output = output.split('\n');
+      assert.notEqual(output[0].indexOf('return'), -1);
+
+    });
 
   });
 

@@ -19,3 +19,7 @@ module.exports.generators = coverage
 module.exports.node = coverage
   ? require('./lib-cov/node')
   : require('./lib/node');
+
+module.exports.compiler = coverage
+  ? require('./lib-cov/compiler')
+  : require('./lib/compiler');

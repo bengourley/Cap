@@ -435,4 +435,12 @@ describe('lib/parser', function () {
     });
   });
 
+  describe('#trycatch()', function () {
+    it('should parse a try/catch block', function () {
+
+    });
+    it('should error on a missing catch');
+    it('should not allow catch without a leading try');
+  });
+
 });

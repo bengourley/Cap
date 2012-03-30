@@ -1,0 +1,6 @@
+foo arg
+
+if foo
+  print 'yes'
+else
+  print 'no'
