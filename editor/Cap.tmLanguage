@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>fileTypes</key>
+	<array>
+		<string>cap</string>
+	</array>
+	<key>name</key>
+	<string>Cap</string>
+	<key>patterns</key>
+	<array>
+		<dict>
+			<key>comment</key>
+			<string>Comments</string>
+			<key>match</key>
+			<string>(#.*)
+</string>
+			<key>name</key>
+			<string>comment.line.cap</string>
+		</dict>
+		<dict>
+			<key>comment</key>
+			<string>String</string>
+			<key>match</key>
+			<string>\s(if|else|for|while|to|true|false|local|where|try|catch)\s</string>
+			<key>name</key>
+			<string>keyword.control.cap</string>
+		</dict>
+		<dict>
+			<key>comment</key>
+			<string>Storage literals</string>
+			<key>match</key>
+			<string>(\|.*\||{}|\[\]|\(\))</string>
+			<key>name</key>
+			<string>storage.type</string>
+		</dict>
+		<dict>
+			<key>comment</key>
+			<string>Operators</string>
+			<key>match</key>
+			<string>(\||\+|-|\*|/|=|!|&amp;|&lt;|&gt;|\?|:)</string>
+			<key>name</key>
+			<string>keyword.operator.cap</string>
+		</dict>
+		<dict>
+			<key>comment</key>
+			<string>Strings</string>
+			<key>match</key>
+			<string>('.*')</string>
+			<key>name</key>
+			<string>string.quoted.single.cap</string>
+		</dict>
+	</array>
+	<key>scopeName</key>
+	<string>source.cap</string>
+	<key>uuid</key>
+	<string>ce3c3779-97c0-4f7e-a239-25222bc1b1cd</string>
+</dict>
+</plist>

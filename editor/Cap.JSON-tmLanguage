@@ -1,0 +1,33 @@
+{
+  "name": "Cap",
+  "scopeName": "source.cap",
+  "fileTypes": ["cap"],
+  "patterns": [
+    {
+      "match": "(#.*)\n",
+      "name": "comment.line.cap",
+      "comment": "Comments"
+    },
+    {
+      "match": "\\s(if|else|for|while|to|true|false|local|where|try|catch)\\s",
+      "name": "keyword.control.cap",
+      "comment": "String"
+    },
+    {
+      "match": "(\\|.*\\||{}|\\[\\]|\\(\\))",
+      "name": "storage.type",
+      "comment": "Storage literals"
+    },
+    {
+      "match": "(\\||\\+|-|\\*|/|=|!|&|<|>|\\?|:)",
+      "name": "keyword.operator.cap",
+      "comment": "Operators"
+    },
+    {
+      "match": "('.*')",
+      "name": "string.quoted.single.cap",
+      "comment": "Strings"
+    }
+  ],
+  "uuid": "ce3c3779-97c0-4f7e-a239-25222bc1b1cd"
+}
