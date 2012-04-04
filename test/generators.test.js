@@ -131,7 +131,7 @@ describe('lib/generators', function () {
 
   });
 
-  describe('#functionLiteral', function () {
+  describe('#functionLiteral()', function () {
 
     var ast;
     beforeEach(function () {
@@ -170,7 +170,29 @@ describe('lib/generators', function () {
 
   });
 
-  describe('#call', function () {
+  describe('#assignment()', function () {
+
+    it('should prefix variable assignments with var', function () {
+      var ast = parseSample('assignment01.cap');
+      var output = generators['assignment'](ast.childNodes[0].childNodes[0], {
+        scope : [],
+        omitReturn : true
+      });
+      assert.equal(output, 'var foo=10');
+    });
+
+    it('should not prefix property assignments with var', function () {
+      var ast = parseSample('assignment02.cap');
+      var output = generators['statementList'](ast.childNodes[0], {
+        scope : []
+      });
+      assert.equal(output.split('\n')[1], 'foo.bar=20;');
+      assert.equal(output.split('\n')[2], 'return foo.bar;');
+    });
+
+  });
+
+  describe('#call()', function () {
 
     var ast;
     beforeEach(function () {
