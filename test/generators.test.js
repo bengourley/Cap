@@ -208,4 +208,17 @@ describe('lib/generators', function () {
 
   });
 
+  describe('#trycatch()', function () {
+
+    it('should generate a try catch block', function () {
+
+      var ast = parseSample('trycatch.cap');
+      var output = generators['trycatch'](ast.childNodes[0].childNodes[0], {
+        scope : ['foo', 'print', 'bar']
+      });
+
+    });
+
+  });
+
 });
