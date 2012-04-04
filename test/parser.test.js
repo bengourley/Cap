@@ -436,11 +436,25 @@ describe('lib/parser', function () {
   });
 
   describe('#trycatch()', function () {
-    it('should parse a try/catch block', function () {
 
+    it('should parse a try/catch block', function () {
+      var program = createParser(createLexer()).parse('try\n  foo bar\ncatch e\n  bar foo');
+      assert.equal(program.childNodes[0].childNodes.length, 1);
+      assert.equal(program.childNodes[0].childNodes[0].type, 'trycatch');
     });
-    it('should error on a missing catch');
-    it('should not allow catch without a leading try');
+
+    it('should error on a missing catch', function () {
+      assert.throws(function () {
+        var program = createParser(createLexer()).parse('try\n  foo bar\nfoo bar');
+      });
+    });
+
+    it('should not allow catch without a leading try', function () {
+      assert.throws(function () {
+        var program = createParser(createLexer()).parse('catch e\n  foo bar');
+      });
+    });
+
   });
 
 });

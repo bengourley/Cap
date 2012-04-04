@@ -17,7 +17,7 @@ describe('acceptance tests', function () {
     files.forEach(function (filename) {
       var input = fs.readFileSync(__dirname + '/acceptance/' + filename);
       assert.doesNotThrow(function () {
-        console.log(createCompiler(filename).compile(input, { compress : false }));
+        createCompiler(filename).compile(input, { compress : true });
       });
     });
   });
