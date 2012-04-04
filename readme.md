@@ -17,13 +17,13 @@ Then:
 
 Provided you used the global flag `-g` and the path `/usr/local/bin` is in your path, `capc` should now be available. Verify by running `capc -h` which should print something similar to the following:
 
-  Usage: capc [options] [source-file]
+    Usage: capc [options] [source-file]
 
-  Options:
+    Options:
 
-    -h, --help       output usage information
-    -V, --version    output the version number
-    -p, --printtree  print the syntax tree instead of compiling
+      -h, --help       output usage information
+      -V, --version    output the version number
+      -p, --printtree  print the syntax tree instead of compiling
 
 ### Editor Syntax
 
