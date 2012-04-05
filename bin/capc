@@ -5,8 +5,8 @@
  */
 
 var program = require('commander'),
-		fs = require('fs'),
-		createCompiler = require('../lib/compiler');
+		createCompiler = require('../lib/compiler'),
+		createCli = require('../lib/cli');
 
 program
 	.version('0.0.1')
@@ -27,62 +27,17 @@ program
 		'make the compiled js browser compatible'
 	);
 
-
 // Custom help
 program.on('--help', function(){
   console.log('  Example:');
   console.log('');
   console.log('    $ capc example.cap');
   console.log('');
-  console.log('    Compiles example.cap -> example.cap.js');
+  console.log('    Compiles example.cap \u2192 example.cap.js');
   console.log('');
 });
 
 program.parse(process.argv);
 
-if (!program.args[0]) {
-
-	console.log('No file supplied!');
-
-} else {
-
-	// Read the file from the path supplied
-	fs.readFile(program.args[0], 'utf8', function (err, data) {
-
-		if (err) {
-			if (err.code === 'ENOENT') {
-				console.log('No file at `' + program.args[0] + '`');
-				return;
-			} else {
-				throw err;
-			}
-		}
-
-		try {
-			var output = createCompiler(program.args[0] + '.js').compile(data, {
-				tree : program.printtree,
-				compress : program.compress
-			});
-
-			if (program.print || program.printtree) {
-				console.log(output);
-			} else {
-				fs.writeFile(program.args[0] + '.js', output, function (err) {
-					if (err) throw err;
-					console.log(program.args[0] + ' \u2192 ' + program.args[0] + '.js');
-				});
-			}
-
-		} catch (e) {
-
-			if (['ParseError', 'SemanticError'].indexOf(e.type) !== -1) {
-        console.log(e.message);
-      } else {
-        throw e;
-      }
-
-    }
-
-	});
-
-}
+// Run the cli with args
+createCli(program).run();

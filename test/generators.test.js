@@ -179,6 +179,13 @@ describe('lib/generators', function () {
         omitReturn : true
       });
       assert.equal(output, 'var foo=10');
+
+      ast = parseSample('assignment03.cap');
+      output = generators['assignment'](ast.childNodes[0].childNodes[0], {
+        scope : ['require'],
+        omitReturn : true
+      });
+      assert.equal(output, 'var http=require(\'http\')');
     });
 
     it('should not prefix property assignments with var', function () {
