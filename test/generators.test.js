@@ -142,22 +142,22 @@ describe('lib/generators', function () {
       var output = generators['functionLiteral'](ast.childNodes[0].childNodes[0], {
         scope : []
       });
-      assert.equal(output, 'function __anon1() {return 0;\n}');
+      assert.equal(output, 'function __anon1() {\nreturn 0;\n}');
     });
 
     it('should create a function which takes arguments', function () {
       var output = generators['functionLiteral'](ast.childNodes[0].childNodes[1], {
         scope : []
       });
-      assert.equal(output, 'function __anon1(x) {return x;\n}');
+      assert.equal(output, 'function __anon1(x) {\nreturn x;\n}');
       output = generators['functionLiteral'](ast.childNodes[0].childNodes[2], {
         scope : []
       });
-      assert.equal(output, 'function __anon2(x, y) {return x+y;\n}');
+      assert.equal(output, 'function __anon2(x, y) {\nreturn x+y;\n}');
       output = generators['functionLiteral'](ast.childNodes[0].childNodes[3], {
         scope : []
       });
-      assert.equal(output, 'function __anon3(x, y, z) {return x+y+z;\n}');
+      assert.equal(output, 'function __anon3(x, y, z) {\nreturn x+y+z;\n}');
     });
 
     it('should name a function if it is being assigned', function () {
@@ -165,7 +165,7 @@ describe('lib/generators', function () {
         scope : [],
         omitReturn : true
       });
-      assert.equal(output, 'var foo=function foo(x, y, z) {return x+y+z;\n}');
+      assert.equal(output, 'var foo=function foo(x, y, z) {\nreturn x+y+z;\n}');
     });
 
   });
@@ -201,9 +201,36 @@ describe('lib/generators', function () {
 
   describe('#call()', function () {
 
-    var ast;
-    beforeEach(function () {
-      ast = parseSample('call.cap');
+    it('should generate function calls correctly', function () {
+      var ast = parseSample('call.cap');
+      var output = generators['statementList'](ast.childNodes[0], {
+        scope : ['foo', 'bar', 'baz']
+      });
+      assert.equal(output.split('\n')[0], 'foo();');
+      assert.equal(output.split('\n')[1], 'foo(bar);');
+      assert.equal(output.split('\n')[2], 'return foo(bar)(baz);');
+    });
+
+  });
+
+  describe('#where()', function () {
+
+    it('should generate where clauses correctly', function () {
+      var ast = parseSample('where01.cap');
+      var output = generators['statementList'](ast.childNodes[0], {
+        scope : ['http']
+      });
+      assert.equal(output.split('\n')[0], 'var __s=function __s(req, res) {');
+      assert.equal(output.split('\n')[1], 'res.writeHead(200);');
+      assert.equal(output.split('\n')[2], 'return res.end(\'Hello World\');');
+
+      ast = parseSample('where02.cap');
+      output = generators['statementList'](ast.childNodes[0], {
+        scope : ['foo']
+      });
+      assert.equal(output.split('\n')[0], 'var __bar=10;');
+      assert.equal(output.split('\n')[1], 'return foo(__bar);');
+
     });
 
   });
@@ -231,7 +258,8 @@ describe('lib/generators', function () {
         scope : ['foo', 'print', 'arg']
       });
       output = output.split('\n');
-      assert.notEqual(output[0].indexOf('return'), -1);
+      console.log(output);
+      assert.notEqual(output[output.length - 3].indexOf('return'), -1);
 
     });
 
