@@ -270,6 +270,13 @@ describe('lib/parser', function () {
       assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'reference');
       assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'tuple');
 
+      program = createParser(createLexer()).parse('a[1] b');
+      assert.equal(program.childNodes[0].childNodes.length, 1);
+      assert.equal(program.childNodes[0].childNodes[0].type, 'call');
+      assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
+      assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'arrayAccessor');
+      assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'reference');
+
     });
   });
 

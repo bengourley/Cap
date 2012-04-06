@@ -44,10 +44,7 @@ describe('lib/generators', function () {
         childNodes : [{ type : 'leaf', value :''}]
       });
 
-      assert.equal(output, '(function (module, exports, require) {\n' +
-        '}(typeof module !== \'undefined\' ? module : _module(\'test\'), ' +
-        'typeof exports !== \'undefined\' ? exports : _exports(\'test\'), ' +
-        'function (module) { return require(module.indexOf(\'./\') === 0 ? module + \'.cap.js\' : module); }\n'+ '));');
+      assert.equal(output, '(function () {\n}());\n');
 
     });
 
@@ -127,7 +124,13 @@ describe('lib/generators', function () {
 
   describe('#concatenation()', function () {
 
-    it('should prepend an empty string to a concatenation');
+    it('should prepend an empty string to a concatenation', function () {
+      var ast = parseSample('concat01.cap');
+      var output = generators['concatenation'](ast.childNodes[0].childNodes[0], {
+        scope : []
+      });
+      assert.equal(output, '\'\' + \'jim\' + \'bob\'');
+    });
 
   });
 
@@ -258,7 +261,6 @@ describe('lib/generators', function () {
         scope : ['foo', 'print', 'arg']
       });
       output = output.split('\n');
-      console.log(output);
       assert.notEqual(output[output.length - 3].indexOf('return'), -1);
 
     });
@@ -274,6 +276,102 @@ describe('lib/generators', function () {
         scope : ['foo', 'print', 'bar']
       });
 
+    });
+
+  });
+
+  describe('#arrayAccessor()', function () {
+
+    it('should access an array with a numeric index', function () {
+      var ast = parseSample('arrayAccessor01.cap');
+      var output = generators['arrayAccessor'](ast.childNodes[0].childNodes[0], {
+        scope : ['myArray']
+      });
+      assert.equal(output, 'myArray[4]');
+    });
+
+    it('should access an array with an expression index', function () {
+      var ast = parseSample('arrayAccessor02.cap');
+      var output = generators['arrayAccessor'](ast.childNodes[0].childNodes[0], {
+        scope : ['myArray']
+      });
+      assert.equal(output, 'myArray[10+4/2]');
+    });
+
+    it('should access an array with a string index', function () {
+      var ast = parseSample('arrayAccessor03.cap');
+      var output = generators['arrayAccessor'](ast.childNodes[0].childNodes[0], {
+        scope : ['myArray']
+      });
+      assert.equal(output, 'myArray[\'el\']');
+    });
+
+    it('should be ok as a function reference', function () {
+      var ast = parseSample('arrayAccessor04.cap');
+      var output = generators['call'](ast.childNodes[0].childNodes[0], {
+        scope : ['myArray']
+      });
+      assert.equal(output, 'myArray[\'el\'](10)');
+    });
+
+    it('should be able to be assigned to', function () {
+      var ast = parseSample('arrayAccessor05.cap');
+      var output = generators['assignment'](ast.childNodes[0].childNodes[0], {
+        scope : ['myArray'],
+        omitReturn : true
+      });
+      assert.equal(output, 'myArray[\'el\']=20');
+    });
+
+  });
+
+  describe('#vectorLiteral()', function () {
+
+    it('should create vectorLiteral', function () {
+      var ast = parseSample('vectorLiteral01.cap');
+      var output = generators['assignment'](ast.childNodes[0].childNodes[0], {
+        scope : ['symbol'],
+        omitReturn : true
+      });
+      assert.equal(output, 'var myArray=[5+5,\'jim\',symbol]');
+    });
+
+  });
+
+  describe('#operator()', function () {
+
+    it('should work with prefix operators', function () {
+      var ast = parseSample('operators01.cap');
+      var output = generators['statementList'](ast.childNodes[0], {
+        scope : ['myBoolean'],
+        omitReturn : true
+      });
+      assert.equal(output, '!myBoolean;\n-10;\n');
+    });
+
+    it('should work with infix operators', function () {
+      var ast = parseSample('operators02.cap');
+      var output = generators['statementList'](ast.childNodes[0], {
+        scope : [],
+        omitReturn : true
+      });
+      assert.equal(output, 'true||false;\ntrue&&false;\n');
+    });
+
+    it('should work with postfix operators');
+
+  });
+
+  describe('#conditional()', function () {
+
+    it('should create a conditional', function () {
+      var ast = parseSample('conditional01.cap');
+      var output = generators['statementList'](ast.childNodes[0], {
+        scope : ['foo', 'bar', 'baz'],
+        omitReturn : true
+      });
+      assert.equal(output, 'if (foo) {\n(function () {\nreturn foo();\n}());} ' +
+        'else if (bar) {\n(function () {\nreturn bar();\n}());} else {\n(function () {\nreturn baz();\n}());}\n');
     });
 
   });
