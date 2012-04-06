@@ -28,30 +28,29 @@ program
 	)
   .option(
     '-f, --files',
-    'compile only the given files',
-    Array
+    'compile only the given files'
   );
 
 // Custom help
 program.on('--help', function(){
   console.log('  Examples:');
   console.log('');
-  console.log('    $ capc');
+  console.log('      $ capc');
   console.log('');
-  console.log('  |  Recursively scans the current directory and');
-  console.log('  |  and compiles all the `.cap` files it finds');
+  console.log('    Recursively scans the current directory and');
+  console.log('    and compiles all the `.cap` files it finds');
   console.log('');
-  console.log('    $ capc --browser app');
+  console.log('      $ capc --browser main.cap');
   console.log('');
-  console.log('  |  Recursively scans the current directory and');
-  console.log('  |  and compiles all the `.cap` files, bundling');
-  console.log('  |  them into a single file `app.cap.js` with some');
-  console.log('  |  boilerplate code that will make it run in the');
-  console.log('  |  browser');
+  console.log('    Recursively scans the current directory and');
+  console.log('    and compiles all the `.cap` files, bundling');
+  console.log('    them into a single file `main.browser.cap.js` with some');
+  console.log('    boilerplate code that will make it run in the');
+  console.log('    browser. Uses the given file as the program entry point');
   console.log('');
-  console.log('    $ capc -f example.cap');
+  console.log('      $ capc -f example.cap');
   console.log('');
-  console.log('  |  Compiles example.cap \u2192 example.cap.js');
+  console.log('    Compiles example.cap \u2192 example.cap.js');
   console.log('');
 });
 
