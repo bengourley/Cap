@@ -5,27 +5,28 @@
  */
 
 var program = require('commander'),
-		createCompiler = require('../lib/compiler'),
-		createCli = require('../lib/cli');
+    createCompiler = require('../lib/compiler'),
+    createCli = require('../lib/cli');
 
 program
-	.version('0.0.1')
-	.option(
-		'-t, --printtree',
-		'print the syntax tree instead of compiling (forces --print)'
-	)
-	.option(
-		'-p, --print',
-		'print the output instead of writing to file'
-	)
-	.option(
-		'-c, --compress',
-		'compress the output'
-	)
-	.option(
-		'-b, --browser',
-		'bundle the compiled js into a single js file for use in the browser'
-	)
+  .version('0.0.1')
+  .option(
+    '-t, --printtree',
+    'print the syntax tree instead of compiling (forces --print)'
+  )
+  .option(
+    '-p, --print',
+    'print the output instead of writing to file'
+  )
+  .option(
+    '-c, --compress',
+    'compress the output'
+  )
+  .option(
+    '-t, --target <node|browser>',
+    'specify the compilation target',
+    String
+  )
   .option(
     '-f, --files',
     'compile only the given files'

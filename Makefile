@@ -19,4 +19,7 @@ docs: docclean
 	@docco lib/*.js
 	@open docs/compiler.html
 
-.PHONY: test test-cov docs lib-cov
+browser-lib:
+	@./node_modules/.bin/uglifyjs -nc ./lib/env/browser.js > ./lib/env/browser.min.js
+
+.PHONY: test test-cov docs lib-cov browser-lib
