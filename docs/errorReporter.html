@@ -16,7 +16,9 @@ error message.</p>
 </code></pre>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Function to instantiate an error reporter.
 The input string <code>source</code> must be passed in
 on creation.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">createErrorReporter</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">source</span><span class="p">)</span> <span class="p">{</span>
-  
+
+  <span class="nx">source</span> <span class="o">=</span> <span class="nx">source</span> <span class="o">+</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+
   <span class="kd">var</span> <span class="nx">errorReporter</span> <span class="o">=</span> <span class="p">{};</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <h3>Utilities</h3>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Work out the line number from the
 <code>errorLocation</code>, which is a linear
 offset in the source string.</p>

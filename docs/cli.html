@@ -75,14 +75,13 @@ callback with the list of <code>.cap</code> files</p>             </td>         
   <span class="kd">var</span> <span class="nx">write</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">fs</span><span class="p">.</span><span class="nx">writeFile</span><span class="p">(</span><span class="nx">file</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;.js&#39;</span><span class="p">,</span> <span class="nx">file</span><span class="p">.</span><span class="nx">output</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
       <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="nx">callback</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
-      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">file</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; \u2192 &#39;</span> <span class="o">+</span> <span class="nx">file</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;.js&#39;</span><span class="p">);</span>
       <span class="nx">callback</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
     <span class="p">});</span>
   <span class="p">};</span>
 
   <span class="kd">var</span> <span class="nx">run</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">program</span><span class="p">.</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>No file args supplied, so recurse the
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">program</span><span class="p">.</span><span class="nx">files</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>No file args supplied, so recurse the
 directory and comile all of the source
 files that are found</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">collectFilenames</span><span class="p">(</span><span class="s1">&#39;./&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">capfiles</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
@@ -99,20 +98,54 @@ files that are found</p>             </td>             <td class="code">        
           <span class="nx">async</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">sources</span><span class="p">,</span> <span class="nx">compile</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">out</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
               <span class="k">if</span> <span class="p">([</span><span class="s1">&#39;ParseError&#39;</span><span class="p">,</span> <span class="s1">&#39;SemanticError&#39;</span><span class="p">].</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
               <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                 <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
               <span class="p">}</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-              <span class="nx">out</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">program</span><span class="p">.</span><span class="nx">print</span> <span class="o">||</span> <span class="nx">program</span><span class="p">.</span><span class="nx">printtree</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">file</span><span class="p">.</span><span class="nx">output</span><span class="p">);</span>
-                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                  <span class="nx">write</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
+
+              <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">program</span><span class="p">.</span><span class="nx">browser</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="nx">out</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="k">if</span> <span class="p">(</span><span class="nx">program</span><span class="p">.</span><span class="nx">print</span> <span class="o">||</span> <span class="nx">program</span><span class="p">.</span><span class="nx">printtree</span><span class="p">)</span> <span class="p">{</span>
+                      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">file</span><span class="p">.</span><span class="nx">output</span><span class="p">);</span>
+                  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">write</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+                      <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
+                      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">file</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; \u2192 &#39;</span> <span class="o">+</span> <span class="nx">file</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;.js&#39;</span><span class="p">);</span>
+                    <span class="p">});</span>
+                  <span class="p">}</span>
+                <span class="p">});</span>
+
+              <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+
+                <span class="kd">var</span> <span class="nx">output</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+
+                <span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span><span class="p">(</span><span class="nx">__dirname</span> <span class="o">+</span> <span class="s1">&#39;/runtime/browser.js&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">browser</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
+                  <span class="nx">output</span> <span class="o">+=</span> <span class="nx">browser</span><span class="p">;</span>
+                  <span class="nx">out</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
+
+                    <span class="nx">output</span> <span class="o">+=</span> <span class="s1">&#39;\n_module(\&#39;&#39;</span> <span class="o">+</span> <span class="nx">file</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;\&#39;, function (module, exports) {\n&#39;</span><span class="p">;</span>
+                    <span class="nx">output</span> <span class="o">+=</span> <span class="nx">file</span><span class="p">.</span><span class="nx">output</span><span class="p">;</span>
+                    <span class="nx">output</span> <span class="o">+=</span> <span class="s1">&#39;\nreturn exports;&#39;</span><span class="p">;</span>
+                    <span class="nx">output</span> <span class="o">+=</span> <span class="s1">&#39;\n});&#39;</span><span class="p">;</span>
+
                   <span class="p">});</span>
-                <span class="p">}</span>
-              <span class="p">});</span>
+
+                  <span class="nx">output</span> <span class="o">+=</span> <span class="s1">&#39;\nrequire(\&#39;./&#39;</span> <span class="o">+</span> <span class="nx">program</span><span class="p">.</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.cap\&#39;);&#39;</span><span class="p">;</span>
+
+                  <span class="kd">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="nx">program</span><span class="p">.</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">?</span> <span class="nx">program</span><span class="p">.</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.browser.cap&#39;</span> <span class="o">:</span> <span class="s1">&#39;browser.cap&#39;</span><span class="p">;</span>
+                  <span class="nx">write</span><span class="p">({</span>
+                    <span class="nx">name</span> <span class="o">:</span> <span class="nx">name</span><span class="p">,</span>
+                    <span class="nx">output</span> <span class="o">:</span> <span class="nx">output</span>
+                  <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
+                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Compiled browser bundle to: &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;.js&#39;</span><span class="p">);</span>
+                  <span class="p">});</span>
+                <span class="p">});</span>
+
+              <span class="p">}</span>
             <span class="p">}</span>
 
           <span class="p">});</span>
@@ -123,43 +156,48 @@ files that are found</p>             </td>             <td class="code">        
 
 
     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>Specific files were passed, compile those
-instead of recursing the directory</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>Read the file from the path supplied</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span><span class="p">(</span><span class="nx">program</span><span class="p">.</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;utf8&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+instead of recursing the directory</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">program</span><span class="p">.</span><span class="nx">args</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">arg</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>Read the file from the path supplied</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span><span class="p">(</span><span class="nx">arg</span><span class="p">,</span> <span class="s1">&#39;utf8&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
-          <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nx">code</span> <span class="o">===</span> <span class="s1">&#39;ENOENT&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;No file at `&#39;</span> <span class="o">+</span> <span class="nx">program</span><span class="p">.</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;`&#39;</span><span class="p">);</span>
-            <span class="k">return</span><span class="p">;</span>
-          <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
-          <span class="p">}</span>
-        <span class="p">}</span>
-
-        <span class="k">try</span> <span class="p">{</span>
-
-          <span class="nx">compile</span><span class="p">({</span>
-            <span class="nx">filename</span> <span class="o">:</span> <span class="nx">program</span><span class="p">.</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-            <span class="nx">data</span> <span class="o">:</span> <span class="nx">data</span>
-          <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">program</span><span class="p">.</span><span class="nx">print</span> <span class="o">||</span> <span class="nx">program</span><span class="p">.</span><span class="nx">printtree</span><span class="p">)</span> <span class="p">{</span>
-              <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">file</span><span class="p">.</span><span class="nx">output</span><span class="p">);</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nx">code</span> <span class="o">===</span> <span class="s1">&#39;ENOENT&#39;</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;No file at `&#39;</span> <span class="o">+</span> <span class="nx">arg</span> <span class="o">+</span> <span class="s1">&#39;`&#39;</span><span class="p">);</span>
+              <span class="k">return</span><span class="p">;</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-              <span class="nx">write</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
-              <span class="p">});</span>
+              <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
+            <span class="p">}</span>
+          <span class="p">}</span>
+
+          <span class="k">try</span> <span class="p">{</span>
+
+            <span class="nx">compile</span><span class="p">({</span>
+              <span class="nx">filename</span> <span class="o">:</span> <span class="nx">arg</span> <span class="o">+</span> <span class="s1">&#39;.js&#39;</span><span class="p">,</span>
+              <span class="nx">data</span> <span class="o">:</span> <span class="nx">data</span>
+            <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
+
+              <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
+
+              <span class="k">if</span> <span class="p">(</span><span class="nx">program</span><span class="p">.</span><span class="nx">print</span> <span class="o">||</span> <span class="nx">program</span><span class="p">.</span><span class="nx">printtree</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">file</span><span class="p">.</span><span class="nx">output</span><span class="p">);</span>
+              <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">write</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
+                <span class="p">});</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">arg</span> <span class="o">+</span> <span class="s1">&#39; \u2192 &#39;</span> <span class="o">+</span> <span class="nx">arg</span> <span class="o">+</span> <span class="s1">&#39;.js&#39;</span><span class="p">);</span>
+              <span class="p">}</span>
+
+            <span class="p">});</span>
+
+          <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="k">if</span> <span class="p">([</span><span class="s1">&#39;ParseError&#39;</span><span class="p">,</span> <span class="s1">&#39;SemanticError&#39;</span><span class="p">].</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+              <span class="k">throw</span> <span class="nx">e</span><span class="p">;</span>
             <span class="p">}</span>
 
-          <span class="p">});</span>
-
-        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-
-          <span class="k">if</span> <span class="p">([</span><span class="s1">&#39;ParseError&#39;</span><span class="p">,</span> <span class="s1">&#39;SemanticError&#39;</span><span class="p">].</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
-          <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="nx">e</span><span class="p">;</span>
           <span class="p">}</span>
 
-        <span class="p">}</span>
+        <span class="p">});</span>
 
       <span class="p">});</span>
 
