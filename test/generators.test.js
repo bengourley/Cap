@@ -7,7 +7,7 @@
  * Module dependencies
  */
 
-var createGenerators = require('../').generators,
+var createGenerators = require('../index').generators,
     assert = require('assert');
 
 var createLexer = require('./../lib/lexer'),
@@ -188,7 +188,7 @@ describe('lib/generators', function () {
         scope : ['require'],
         omitReturn : true
       });
-      assert.equal(output, 'var http=require(\'http\')');
+      assert.equal(output, 'var http=_require(\'http\')');
     });
 
     it('should not prefix property assignments with var', function () {

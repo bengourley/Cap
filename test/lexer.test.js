@@ -7,7 +7,7 @@
  * Module dependencies
  */
 
-var lexer = require('../').lexer,
+var lexer = require('../index').lexer,
     assert = require('assert');
 
 /*

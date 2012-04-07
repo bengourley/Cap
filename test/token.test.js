@@ -7,7 +7,7 @@
  * Module dependencies
  */
 
-var token = require('../').token,
+var token = require('../index').token,
     assert = require('assert');
 
 /*

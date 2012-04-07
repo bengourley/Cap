@@ -6,7 +6,7 @@
  * Run with `make test`
  */
 
-var createCompiler = require('../').compiler,
+var createCompiler = require('../index').compiler,
     assert = require('assert'),
     fs = require('fs');
 

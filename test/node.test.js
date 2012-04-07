@@ -7,7 +7,7 @@
  * Module dependencies
  */
 
-var node = require('../').node,
+var node = require('../index').node,
     assert = require('assert');
 
 describe('lib/node', function () {

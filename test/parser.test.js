@@ -7,7 +7,7 @@
  * Module dependencies
  */
 
-var createParser = require('../').parser,
+var createParser = require('../index').parser,
     createLexer = require('../lib/lexer'),
     assert = require('assert');
 
