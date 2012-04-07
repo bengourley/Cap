@@ -24,11 +24,13 @@ program
   )
   .option(
     '-e, --targetenv <env>',
-    'specify the compilation target'
+    'specify the compilation target (defaults to node)',
+    'node'
   )
   .option(
-    '-f, --files',
-    'compile only the given files'
+    '-f, --files <a,b..>',
+    'compile only the given files (comma separated list)',
+    function (f) { return f.split(','); }
   );
 
 // Custom help
@@ -40,7 +42,7 @@ program.on('--help', function(){
   console.log('    Recursively scans the current directory and');
   console.log('    and compiles all the `.cap` files it finds');
   console.log('');
-  console.log('      $ capc --browser main.cap');
+  console.log('      $ capc --e browser main');
   console.log('');
   console.log('    Recursively scans the current directory and');
   console.log('    and compiles all the `.cap` files, bundling');
