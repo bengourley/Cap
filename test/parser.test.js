@@ -144,7 +144,7 @@ describe('lib/parser', function () {
 
   describe('#expression()', function () {
 
-    it('should parse algebraic expressions', function () {
+    it('should parse simple mathematic expressions', function () {
 
       var program = createParser(createLexer()).parse('a + b');
       assert.equal(program.childNodes[0].childNodes.length, 1);
@@ -201,7 +201,23 @@ describe('lib/parser', function () {
       program = createParser(createLexer()).parse('a == b');
       assert.equal(program.childNodes[0].childNodes.length, 1);
       assert.equal(program.childNodes[0].childNodes[0].type, 'operator');
-      assert.equal(program.childNodes[0].childNodes[0].meta.op, '===');
+      assert.equal(program.childNodes[0].childNodes[0].meta.op, '==');
+      assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
+      assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'reference');
+      assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'reference');
+
+      program = createParser(createLexer()).parse('a >= b');
+      assert.equal(program.childNodes[0].childNodes.length, 1);
+      assert.equal(program.childNodes[0].childNodes[0].type, 'operator');
+      assert.equal(program.childNodes[0].childNodes[0].meta.op, '>=');
+      assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
+      assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'reference');
+      assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'reference');
+
+      program = createParser(createLexer()).parse('a != b');
+      assert.equal(program.childNodes[0].childNodes.length, 1);
+      assert.equal(program.childNodes[0].childNodes[0].type, 'operator');
+      assert.equal(program.childNodes[0].childNodes[0].meta.op, '!=');
       assert.equal(program.childNodes[0].childNodes[0].childNodes.length, 2);
       assert.equal(program.childNodes[0].childNodes[0].childNodes[0].type, 'reference');
       assert.equal(program.childNodes[0].childNodes[0].childNodes[1].type, 'reference');
