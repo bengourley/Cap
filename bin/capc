@@ -23,9 +23,8 @@ program
     'compress the output'
   )
   .option(
-    '-t, --target <node|browser>',
-    'specify the compilation target',
-    String
+    '-e, --targetenv <env>',
+    'specify the compilation target'
   )
   .option(
     '-f, --files',
@@ -57,5 +56,13 @@ program.on('--help', function(){
 
 program.parse(process.argv);
 
-// Run the cli with args
-createCli(program).run();
+// Run the cli with args and pass in
+// an asynchronous error handler
+createCli(program, function (err) {
+  if (['ParseError', 'SemanticError'].indexOf(err.type) !== -1) {
+    console.log(err.message);
+  } else {
+    console.log('An unknow error occured. Sorry! The error was:');
+    console.log(err.stack);
+  }
+}).run();

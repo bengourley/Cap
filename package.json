@@ -23,7 +23,7 @@
     "type": "git",
     "url": "git://github.com/bengourley/Cap.git"
   },
-  "main": "lib/node.js",
+  "main": "lib/env/node.js",
   "scripts": {
     "test": "make test"
   }
