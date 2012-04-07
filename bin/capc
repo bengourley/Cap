@@ -64,7 +64,7 @@ createCli(program, function (err) {
   if (['ParseError', 'SemanticError'].indexOf(err.type) !== -1) {
     console.log(err.message);
   } else {
-    console.log('An unknow error occured. Sorry! The error was:');
+    console.log('An unknown error occured. Sorry! The error was:');
     console.log(err.stack);
   }
 }).run();
