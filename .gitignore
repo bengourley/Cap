@@ -1,45 +1,10 @@
-# Node.js with Express and Stlyus (and Expresso TDD)
-public/css/*.css
-public/css/main/*.css
-public/css/main/content/*.css
-public/css/admin/*.css
 /.monitor
-lib-cov/*
-
-# Eclipse
-/.project
-/.settings
-/.buildpath
-
-# Windows
-Thumbs.db
-
-# Ignore this in Clock Harness projects because it is created by the build system.
-/Config/vhost.conf
-
-# Vim
-.*.sw[a-z]
-.swp
-*.un~i
-tags
-
-# OsX
 .DS_Store
 Icon?
 ._*
 .Spotlight-V100
 .Trashes
-
-# nodejs npm modules
 /node_modules
-/customer.log
-
-# node-cluster
-/pids/*.pid
-*.sock
-
-support/ImportProducts/data/
-/.cake_task_cache
 
 Cap.sublime-workspace
 Cap.sublime-project
