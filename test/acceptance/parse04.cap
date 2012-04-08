@@ -1,0 +1,6 @@
+foo = |arg|
+  console.log arg
+
+foo bar baz where
+  bar = 10
+  baz = 20

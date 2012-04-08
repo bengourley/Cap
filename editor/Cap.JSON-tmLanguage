@@ -9,7 +9,7 @@
       "comment": "Comments"
     },
     {
-      "match": "\\s(if|else|for|while|to|true|false|local|where|try|catch)\\s",
+      "match": "\\s(if|else|for|while|true|false|local|where|try|catch)\\s",
       "name": "keyword.control.cap",
       "comment": "String"
     },

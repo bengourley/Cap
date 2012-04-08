@@ -23,7 +23,7 @@
 			<key>comment</key>
 			<string>String</string>
 			<key>match</key>
-			<string>\s(if|else|for|while|to|true|false|local|where|try|catch)\s</string>
+			<string>\s(if|else|for|while|true|false|local|where|try|catch)\s</string>
 			<key>name</key>
 			<string>keyword.control.cap</string>
 		</dict>

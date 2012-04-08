@@ -81,6 +81,19 @@ describe('lib/generators', function () {
     });
   });
 
+  describe('#reference()', function () {
+    it('should be ok with multiple `.`s in reference', function () {
+      var ast = parseSample('reference01.cap');
+      var output = generators['reference'](
+        ast.childNodes[0].childNodes[0], {
+          scope : ['foo']
+        }
+      );
+
+      assert.equal(output, 'foo.bar.baz.bob');
+    });
+  });
+
   describe('#identifier()', function () {
 
     it('should determine whether an identifier is in scope', function () {
