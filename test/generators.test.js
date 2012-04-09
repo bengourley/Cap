@@ -222,9 +222,9 @@ describe('lib/generators', function () {
       var output = generators['statementList'](ast.childNodes[0], {
         scope : ['foo', 'bar', 'baz']
       });
-      assert.equal(output.split('\n')[0], 'foo();');
-      assert.equal(output.split('\n')[1], 'foo(bar);');
-      assert.equal(output.split('\n')[2], 'return foo(bar)(baz);');
+      assert.equal(output.split('\n')[0], 'foo.call(null);');
+      assert.equal(output.split('\n')[1], 'foo.call(null,bar);');
+      assert.equal(output.split('\n')[2], 'return foo.call(null,bar).call(null,baz);');
     });
 
   });
@@ -324,7 +324,7 @@ describe('lib/generators', function () {
       var output = generators['call'](ast.childNodes[0].childNodes[0], {
         scope : ['myArray']
       });
-      assert.equal(output, 'myArray[\'el\'](10)');
+      assert.equal(output, 'myArray[\'el\'].call(null,10)');
     });
 
     it('should be able to be assigned to', function () {
@@ -383,8 +383,8 @@ describe('lib/generators', function () {
         scope : ['foo', 'bar', 'baz'],
         omitReturn : true
       });
-      assert.equal(output, 'if (foo) {\n(function () {\nreturn foo();\n}());} ' +
-        'else if (bar) {\n(function () {\nreturn bar();\n}());} else {\n(function () {\nreturn baz();\n}());}\n');
+      assert.equal(output, 'if (foo) {\n(function () {\nreturn foo.call(null);\n}());} ' +
+        'else if (bar) {\n(function () {\nreturn bar.call(null);\n}());} else {\n(function () {\nreturn baz.call(null);\n}());}\n');
     });
 
   });
