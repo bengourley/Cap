@@ -201,7 +201,7 @@ describe('lib/generators', function () {
         scope : ['require'],
         omitReturn : true
       });
-      assert.equal(output, 'var http=_require(\'http\')');
+      assert.equal(output, 'var http=_require.call(null,\'http\')');
     });
 
     it('should not prefix property assignments with var', function () {
@@ -224,7 +224,7 @@ describe('lib/generators', function () {
       });
       assert.equal(output.split('\n')[0], 'foo.call(null);');
       assert.equal(output.split('\n')[1], 'foo.call(null,bar);');
-      assert.equal(output.split('\n')[2], 'return foo.call(null,bar).call(null,baz);');
+      assert.equal(output.split('\n')[2], 'return foo.call(null,bar).call(foo,baz);');
     });
 
   });
@@ -237,15 +237,15 @@ describe('lib/generators', function () {
         scope : ['http']
       });
       assert.equal(output.split('\n')[0], 'var __s=function __s(req, res) {');
-      assert.equal(output.split('\n')[1], 'res.writeHead(200);');
-      assert.equal(output.split('\n')[2], 'return res.end(\'Hello World\');');
+      assert.equal(output.split('\n')[1], 'res.writeHead.call(res,200);');
+      assert.equal(output.split('\n')[2], 'return res.end.call(res,\'Hello World\');');
 
       ast = parseSample('where02.cap');
       output = generators['statementList'](ast.childNodes[0], {
         scope : ['foo']
       });
       assert.equal(output.split('\n')[0], 'var __bar=10;');
-      assert.equal(output.split('\n')[1], 'return foo(__bar);');
+      assert.equal(output.split('\n')[1], 'return foo.call(null,__bar);');
 
     });
 
@@ -324,7 +324,7 @@ describe('lib/generators', function () {
       var output = generators['call'](ast.childNodes[0].childNodes[0], {
         scope : ['myArray']
       });
-      assert.equal(output, 'myArray[\'el\'].call(null,10)');
+      assert.equal(output, 'myArray[\'el\'].call(myArray,10)');
     });
 
     it('should be able to be assigned to', function () {
