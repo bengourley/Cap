@@ -201,7 +201,7 @@ describe('lib/generators', function () {
         scope : ['require'],
         omitReturn : true
       });
-      assert.equal(output, 'var http=_require.call(null,\'http\')');
+      assert.equal(output, 'var http=_require(\'http\')');
     });
 
     it('should not prefix property assignments with var', function () {
@@ -222,9 +222,9 @@ describe('lib/generators', function () {
       var output = generators['statementList'](ast.childNodes[0], {
         scope : ['foo', 'bar', 'baz']
       });
-      assert.equal(output.split('\n')[0], 'foo.call(null);');
-      assert.equal(output.split('\n')[1], 'foo.call(null,bar);');
-      assert.equal(output.split('\n')[2], 'return foo.call(null,bar).call(foo,baz);');
+      assert.equal(output.split('\n')[0], 'foo();');
+      assert.equal(output.split('\n')[1], 'foo(bar);');
+      assert.equal(output.split('\n')[2], 'return foo(bar)(baz);');
     });
 
   });
@@ -237,15 +237,15 @@ describe('lib/generators', function () {
         scope : ['http']
       });
       assert.equal(output.split('\n')[0], 'var __s=function __s(req, res) {');
-      assert.equal(output.split('\n')[1], 'res.writeHead.call(res,200);');
-      assert.equal(output.split('\n')[2], 'return res.end.call(res,\'Hello World\');');
+      assert.equal(output.split('\n')[1], 'res.writeHead(200);');
+      assert.equal(output.split('\n')[2], 'return res.end(\'Hello World\');');
 
       ast = parseSample('where02.cap');
       output = generators['statementList'](ast.childNodes[0], {
         scope : ['foo']
       });
       assert.equal(output.split('\n')[0], 'var __bar=10;');
-      assert.equal(output.split('\n')[1], 'return foo.call(null,__bar);');
+      assert.equal(output.split('\n')[1], 'return foo(__bar);');
 
     });
 
@@ -324,7 +324,7 @@ describe('lib/generators', function () {
       var output = generators['call'](ast.childNodes[0].childNodes[0], {
         scope : ['myArray']
       });
-      assert.equal(output, 'myArray[\'el\'].call(myArray,10)');
+      assert.equal(output, 'myArray[\'el\'](10)');
     });
 
     it('should be able to be assigned to', function () {
@@ -383,8 +383,8 @@ describe('lib/generators', function () {
         scope : ['foo', 'bar', 'baz'],
         omitReturn : true
       });
-      assert.equal(output, 'if (foo) {\n(function () {\nreturn foo.call(null);\n}());} ' +
-        'else if (bar) {\n(function () {\nreturn bar.call(null);\n}());} else {\n(function () {\nreturn baz.call(null);\n}());}\n');
+      assert.equal(output, 'if (foo) {\n(function () {\nreturn foo();\n}());} ' +
+        'else if (bar) {\n(function () {\nreturn bar();\n}());} else {\n(function () {\nreturn baz();\n}());}\n');
     });
 
   });
