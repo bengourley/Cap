@@ -1,0 +1,4 @@
+draggable = {}
+  name = 'draggable'
+  apply = |obj|
+    offset = 10

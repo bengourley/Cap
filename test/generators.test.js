@@ -351,6 +351,18 @@ describe('lib/generators', function () {
 
   });
 
+  describe('#objectLiteral()', function () {
+
+    it('should create object literal', function () {
+      var ast = parseSample('objectLiteral01.cap');
+      var output = generators['statementList'](ast.childNodes[0], {
+        scope : ['module', 'require', 'console']
+      });
+      assert.equal(output,
+                  'var draggable={name:\'draggable\';\nreturn name,apply:function apply(obj) {\nvar offset=10;\nreturn offset;\n};\nreturn apply};\nreturn draggable;\n');
+    });
+  });
+
   describe('#operator()', function () {
 
     it('should work with prefix operators', function () {
