@@ -42,7 +42,7 @@ program.on('--help', function(){
   console.log('    Recursively scans the current directory and');
   console.log('    and compiles all the `.cap` files it finds');
   console.log('');
-  console.log('      $ capc --e browser main');
+  console.log('      $ capc -e browser main');
   console.log('');
   console.log('    Recursively scans the current directory and');
   console.log('    and compiles all the `.cap` files, bundling');
@@ -50,9 +50,9 @@ program.on('--help', function(){
   console.log('    boilerplate code that will make it run in the');
   console.log('    browser. Uses the given file as the program entry point');
   console.log('');
-  console.log('      $ capc -f example.cap');
+  console.log('      $ capc -e node -f example.cap');
   console.log('');
-  console.log('    Compiles example.cap \u2192 example.cap.js');
+  console.log('    Compiles example.cap \u2192 example.cap.js for running in node');
   console.log('');
 });
 

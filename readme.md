@@ -17,13 +17,37 @@ Then:
 
 Provided you used the global flag `-g` and the path `/usr/local/bin` is in your path, `capc` should now be available. Verify by running `capc -h` which should print something similar to the following:
 
-    Usage: capc [options] [source-file]
+
+    Usage: capc [options]
 
     Options:
 
-      -h, --help       output usage information
-      -V, --version    output the version number
-      -p, --printtree  print the syntax tree instead of compiling
+      -h, --help             output usage information
+      -V, --version          output the version number
+      -t, --printtree        print the syntax tree instead of compiling (forces --print)
+      -p, --print            print the output instead of writing to file
+      -c, --compress         compress the output
+      -e, --targetenv <env>  specify the compilation target (defaults to node)
+      -f, --files <a,b..>    compile only the given files (comma separated list)
+
+    Examples:
+
+        $ capc
+
+      Recursively scans the current directory and
+      and compiles all the `.cap` files it finds
+
+        $ capc -e browser main
+
+      Recursively scans the current directory and
+      and compiles all the `.cap` files, bundling
+      them into a single file `main.browser.cap.js` with some
+      boilerplate code that will make it run in the
+      browser. Uses the given file as the program entry point
+
+        $ capc -e node -f example.cap
+
+      Compiles example.cap → example.cap.js for running in node
 
 ### Editor Syntax
 
