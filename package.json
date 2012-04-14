@@ -4,9 +4,10 @@
   "author": "Ben Gourley <bn@grly.me> (http://bengourley.co.uk)",
   "version": "0.0.1",
   "dependencies": {
-    "commander": ">0",
-    "uglify-js": ">0",
-    "js-beautify-node": "1.0.0"
+    "commander": "0.6.0",
+    "uglify-js": "1.2.6",
+    "js-beautify-node": "1.0.0",
+    "async": "0.1.18"
   },
   "devDependencies": {
     "mocha": ">0"
