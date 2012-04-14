@@ -1,0 +1,128 @@
+<!DOCTYPE html>  <html> <head>   <title>cli.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="cli.html">                 cli.js               </a>                                           <a class="source" href="cliHelpers.html">                 cliHelpers.js               </a>                                           <a class="source" href="compiler.html">                 compiler.js               </a>                                           <a class="source" href="errorReporter.html">                 errorReporter.js               </a>                                           <a class="source" href="generator.html">                 generator.js               </a>                                           <a class="source" href="generators.html">                 generators.js               </a>                                           <a class="source" href="helpers.html">                 helpers.js               </a>                                           <a class="source" href="indentHandler.html">                 indentHandler.js               </a>                                           <a class="source" href="lexer.html">                 lexer.js               </a>                                           <a class="source" href="node.html">                 node.js               </a>                                           <a class="source" href="parser.html">                 parser.js               </a>                                           <a class="source" href="token.html">                 token.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               cli.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="cm">/*</span>
+<span class="cm"> * Module dependencies</span>
+<span class="cm"> */</span>
+<span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">),</span>
+    <span class="nx">createCliHelpers</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./cliHelpers&#39;</span><span class="p">);</span>
+
+
+<span class="kd">var</span> <span class="nx">createCli</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">program</span><span class="p">,</span> <span class="nx">handle</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="kd">var</span> <span class="nx">cli</span> <span class="o">=</span> <span class="p">{};</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Get helper functions</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">helpers</span> <span class="o">=</span> <span class="nx">createCliHelpers</span><span class="p">(</span><span class="nx">program</span><span class="p">),</span>
+      <span class="nx">collectFilenames</span> <span class="o">=</span> <span class="nx">helpers</span><span class="p">.</span><span class="nx">collectFilenames</span><span class="p">,</span>
+      <span class="nx">readFiles</span> <span class="o">=</span> <span class="nx">helpers</span><span class="p">.</span><span class="nx">readFiles</span><span class="p">,</span>
+      <span class="nx">compileBatch</span> <span class="o">=</span> <span class="nx">helpers</span><span class="p">.</span><span class="nx">compileBatch</span><span class="p">,</span>
+      <span class="nx">write</span> <span class="o">=</span> <span class="nx">helpers</span><span class="p">.</span><span class="nx">write</span><span class="p">;</span>
+
+  <span class="kd">var</span> <span class="nx">compileForNode</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">out</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">header</span> <span class="o">=</span> <span class="s1">&#39;require(\&#39;Cap\&#39;);\n&#39;</span><span class="p">;</span>
+    <span class="nx">header</span> <span class="o">+=</span> <span class="s1">&#39;function _require(module) {\n&#39;</span> <span class="o">+</span>
+              <span class="s1">&#39;  if (module.indexOf(\&#39;./\&#39;) === 0) {&#39;</span> <span class="o">+</span>
+              <span class="s1">&#39;    module += \&#39;.cap.js\&#39;&#39;</span> <span class="o">+</span>
+              <span class="s1">&#39;  }&#39;</span> <span class="o">+</span>
+              <span class="s1">&#39;  return require(module);\n}\n&#39;</span><span class="p">;</span>
+    <span class="nx">out</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">file</span><span class="p">.</span><span class="nx">output</span> <span class="o">=</span> <span class="nx">header</span> <span class="o">+</span> <span class="nx">file</span><span class="p">.</span><span class="nx">output</span><span class="p">;</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">program</span><span class="p">.</span><span class="nx">print</span> <span class="o">||</span> <span class="nx">program</span><span class="p">.</span><span class="nx">printtree</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">file</span><span class="p">.</span><span class="nx">output</span><span class="p">);</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">write</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">return</span> <span class="nx">handle</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">file</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; \u2192 &#39;</span> <span class="o">+</span> <span class="nx">file</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;.js&#39;</span><span class="p">);</span>
+        <span class="p">});</span>
+      <span class="p">}</span>
+    <span class="p">});</span>
+  <span class="p">};</span>
+
+  <span class="kd">var</span> <span class="nx">compileForBrowser</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">out</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">program</span><span class="p">.</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Please supply a module entry point for your browser bundle, e.g `app`&#39;</span><span class="p">);</span>
+      <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">var</span> <span class="nx">output</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+
+    <span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span><span class="p">(</span><span class="nx">__dirname</span> <span class="o">+</span> <span class="s1">&#39;/env/browser.min.js&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">browser</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">return</span> <span class="nx">handle</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+      <span class="nx">output</span> <span class="o">+=</span> <span class="nx">browser</span><span class="p">;</span>
+      <span class="nx">out</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">output</span> <span class="o">+=</span> <span class="s1">&#39;\n_module(\&#39;&#39;</span> <span class="o">+</span> <span class="nx">file</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;\&#39;, function (module, exports) {\n&#39;</span><span class="p">;</span>
+        <span class="nx">output</span> <span class="o">+=</span> <span class="nx">file</span><span class="p">.</span><span class="nx">output</span><span class="p">;</span>
+        <span class="nx">output</span> <span class="o">+=</span> <span class="s1">&#39;\nreturn exports;&#39;</span><span class="p">;</span>
+        <span class="nx">output</span> <span class="o">+=</span> <span class="s1">&#39;\n});&#39;</span><span class="p">;</span>
+      <span class="p">});</span>
+
+      <span class="nx">output</span> <span class="o">+=</span> <span class="s1">&#39;\n_require(\&#39;./&#39;</span> <span class="o">+</span> <span class="nx">program</span><span class="p">.</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.cap\&#39;);&#39;</span><span class="p">;</span>
+
+      <span class="kd">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="nx">program</span><span class="p">.</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">?</span> <span class="nx">program</span><span class="p">.</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.browser.cap&#39;</span> <span class="o">:</span> <span class="s1">&#39;browser.cap&#39;</span><span class="p">;</span>
+      <span class="nx">write</span><span class="p">({</span>
+        <span class="nx">name</span> <span class="o">:</span> <span class="nx">name</span><span class="p">,</span>
+        <span class="nx">output</span> <span class="o">:</span> <span class="nx">output</span>
+      <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">return</span> <span class="nx">handle</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Compiled browser bundle to: &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;.js&#39;</span><span class="p">);</span>
+      <span class="p">});</span>
+    <span class="p">});</span>
+  <span class="p">};</span>
+
+  <span class="kd">var</span> <span class="nx">output</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">sources</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">compileBatch</span><span class="p">(</span><span class="nx">sources</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">outputs</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">return</span> <span class="nx">handle</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="nx">program</span><span class="p">.</span><span class="nx">printtree</span> <span class="o">||</span> <span class="nx">program</span><span class="p">.</span><span class="nx">print</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">outputs</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">output</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;+ &#39;</span> <span class="o">+</span> <span class="nx">output</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; +\n&#39;</span><span class="p">);</span>
+          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">output</span><span class="p">.</span><span class="nx">output</span><span class="p">);</span>
+          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;\n --- \n&#39;</span><span class="p">);</span>
+        <span class="p">});</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">program</span><span class="p">.</span><span class="nx">targetenv</span> <span class="o">===</span> <span class="s1">&#39;node&#39;</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">compileForNode</span><span class="p">(</span><span class="nx">outputs</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">program</span><span class="p">.</span><span class="nx">targetenv</span> <span class="o">===</span> <span class="s1">&#39;browser&#39;</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">compileForBrowser</span><span class="p">(</span><span class="nx">outputs</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Unsupported targetenv `&#39;</span> <span class="o">+</span> <span class="nx">program</span><span class="p">.</span><span class="nx">targetenv</span> <span class="o">+</span> <span class="s1">&#39;`. Use `node` or `browser`&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">});</span>
+  <span class="p">};</span>
+
+  <span class="kd">var</span> <span class="nx">run</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">program</span><span class="p">.</span><span class="nx">files</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>No file args supplied, so recurse the
+directory and compile all of the source
+files that are found.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">collectFilenames</span><span class="p">(</span><span class="s1">&#39;./&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">filenames</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">return</span> <span class="nx">handle</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Read in all of the contents of
+the found source files.</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">readFiles</span><span class="p">(</span><span class="nx">filenames</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">contents</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">return</span> <span class="nx">handle</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+          <span class="nx">output</span><span class="p">(</span><span class="nx">contents</span><span class="p">);</span>
+        <span class="p">});</span>
+
+      <span class="p">});</span>
+
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Specific source files were passed in.
+Read in their contents.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">readFiles</span><span class="p">(</span><span class="nx">program</span><span class="p">.</span><span class="nx">files</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">contents</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">err</span> <span class="o">&amp;&amp;</span> <span class="nx">err</span><span class="p">.</span><span class="nx">code</span> <span class="o">===</span> <span class="s1">&#39;ENOENT&#39;</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Could not find a source file at `&#39;</span> <span class="o">+</span> <span class="nx">err</span><span class="p">.</span><span class="nx">path</span> <span class="o">+</span> <span class="s1">&#39;`&#39;</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="nx">handle</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">return</span> <span class="nx">handle</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+          <span class="nx">output</span><span class="p">(</span><span class="nx">contents</span><span class="p">);</span>
+        <span class="p">}</span>
+      <span class="p">});</span>
+
+    <span class="p">}</span>
+
+  <span class="p">};</span>
+
+
+  <span class="nx">cli</span><span class="p">.</span><span class="nx">run</span> <span class="o">=</span> <span class="nx">run</span><span class="p">;</span>
+
+  <span class="k">return</span> <span class="nx">cli</span><span class="p">;</span>
+
+<span class="p">};</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">createCli</span><span class="p">;</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
