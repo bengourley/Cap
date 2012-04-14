@@ -3,7 +3,6 @@
   "description": "A language that compiles to JavaScript",
   "author": "Ben Gourley <bn@grly.me> (http://bengourley.co.uk)",
   "version": "0.0.1",
-  "private": true,
   "dependencies": {
     "commander": ">0",
     "uglify-js": ">0",
