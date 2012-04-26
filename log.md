@@ -125,3 +125,87 @@ No meeting.
 Progress: Adding functionality to generators.
 
 Objectives: Implement block scoping and 'local' to prevent overwriting vars outside scope
+
+
+*20/02/12*
+
+No meeting.
+
+Progress: Implemented block scoping. Decided against 'local'. Documentation.
+
+Objectives: Add functionality to generators. Increase test coverage
+
+
+*27/02/12*
+
+Met with supervisor.
+
+Progress: Implemented block scoping. Decided against 'local'. Documentation.
+
+Objectives: Add functionality to generators. Increase test coverage
+
+
+*05/03/12*
+
+No meeting.
+
+Progress: Increased fuctionality of generators and coverage.
+
+Objectives: None
+
+
+--- Easter break ---
+
+
+*12/03/2012*
+
+No meeting.
+
+Progress: None
+
+Objectives: Fix some outstanding bugs.
+
+
+*19/03/2012*
+
+No meeting.
+
+Progress: Bugs fixed, more documatation.
+
+Objectives: Implement comments and array accessors
+
+
+*26/03/2012*
+
+No meeting.
+
+Progress: Comments and array accessors implemented.
+
+Objectives: Add tests for generators. Add sytax mode for editors.
+
+
+*02/04/2012*
+
+No meeting.
+
+Progress: Tests added, syntax mode created.
+
+Objectives: Features for cli.
+
+
+*09/04/2012*
+
+No meeting.
+
+Progress: Features for cli. Started proof of concept app.
+
+Objectives: Proof of concept app, bug fixes.
+
+
+*16/04/2012*
+
+Met with supervisor.
+
+Progress: Finsihed proof of concept app.
+
+Objectives: Finsh report.
