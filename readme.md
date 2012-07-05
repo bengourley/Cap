@@ -1,6 +1,6 @@
 # Cap
 
-A language that compiles to JavaScript, for use in the browser and node.
+Cap was my final year project for my BSc. It's a language that compiles to JavaScript, for use in the browser and node. It takes inspiration from JavaScript, CoffeeScript, Jade, Stylus, Python and ML. **The reason I'm open sourcing it is just for show. I wouldn't recommend using it in production, in fact, I'd definitely recommend not using it.** Feel free to try it out though, and I'm happy to help out if you get stuck with that.
 
 ## Intro
 
@@ -48,6 +48,38 @@ Provided you used the global flag `-g` and the path `/usr/local/bin` is in your 
         $ capc -e node -f example.cap
 
       Compiles example.cap → example.cap.js for running in node
+
+### Syntax
+
+```
+
+# Assignment
+greeting = 'Hello, World!'
+
+# Function calls
+console.log greeting
+
+# Literals
+myObject = {}
+  keyOne = 1
+  keyTwo = 2
+  keyThree = 3
+
+myArray = []
+  'one'
+  'two'
+  'three'
+
+myFunction = |x|
+  # The last expression
+  # is implicitely returned
+  # from a function
+  x + x
+
+```
+
+I admit this is brief, so feel free to check out the full
+syntax guide in report at http://bengourley.github.com/Cap/report.pdf.
 
 ### Editor Syntax
 
