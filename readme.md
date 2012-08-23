@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/bengourley/Cap.png)](http://travis-ci.org/bengourley/Cap)
 # Cap
 
 Cap was my final year project for my BSc. It's a language that compiles to JavaScript, for use in the browser and node. It takes inspiration from JavaScript, CoffeeScript, Jade, Stylus, Python and ML. **The reason I'm open sourcing it is just for show. I wouldn't recommend using it in production, in fact, I'd definitely recommend not using it.** Feel free to try it out though, and I'm happy to help out if you get stuck with that.
