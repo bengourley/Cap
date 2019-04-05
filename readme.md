@@ -5,7 +5,7 @@ Cap was my final year project for my BSc. It's a language that compiles to JavaS
 ## Intro
 
 Cap is a language built on top of Javascript. It aims to unify the underlying concepts of
-functional programming with an elegant and succint syntax.
+functional programming with an elegant and succinct syntax.
 
 # Quickstart
 
